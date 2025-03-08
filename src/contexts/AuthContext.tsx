@@ -12,7 +12,6 @@ export interface User {
   role: UserRole;
   phoneNumber?: string;
   address?: string;
-  // Add missing properties used in AdminLayout
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -23,7 +22,6 @@ export interface Admin {
   password: string;
   role: 'admin' | 'superadmin';
   name: string;
-  // Add property used in AdminUsersPage
   isSuperAdmin: boolean;
   isAdmin: boolean;
 }
@@ -39,14 +37,14 @@ interface AuthContextType {
   adminLogin: (username: string, password: string) => boolean;
   logout: () => void;
   register: (name: string, email: string, password: string, phoneNumber?: string, address?: string) => boolean;
-  addAdmin: (username: string, password: string, name: string, role: 'admin' | 'superadmin') => boolean;
   removeAdmin: (id: string) => void;
   updateUser: (user: Partial<User>) => void;
+  // Only define addAdmin once with the more flexible signature
+  addAdmin: (adminData: Partial<Admin> | string, password?: string, name?: string, role?: 'admin' | 'superadmin') => boolean;
   // Add missing methods and properties used in AdminUsersPage
   adminUsers: Admin[];
   updateAdmin: (admin: Admin) => void;
   deleteAdmin: (id: string) => void;
-  addAdmin: (admin: any) => void;
 }
 
 // Create context
@@ -219,8 +217,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
   
-  // Add admin function
-  const addAdmin = (adminData: any): boolean => {
+  // Combined addAdmin function that handles both object input and individual parameters
+  const addAdmin = (
+    adminData: Partial<Admin> | string,
+    password?: string,
+    name?: string,
+    role?: 'admin' | 'superadmin'
+  ): boolean => {
     // If it's an object with all properties already set
     if (typeof adminData === 'object' && adminData.username) {
       // Check if username already exists
@@ -235,13 +238,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Make sure isSuperAdmin and isAdmin flags are set
       const newAdmin: Admin = {
-        ...adminData,
+        ...adminData as Admin, // Cast to Admin to access properties
         isAdmin: true,
         isSuperAdmin: adminData.isSuperAdmin || adminData.role === 'superadmin'
       };
       
       // Update state
-      setAdmins([...admins, newAdmin]);
+      setAdmins([...admins, newAdmin as Admin]);
       
       toast({
         title: "Admin added successfully",
@@ -251,7 +254,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     // Older signature (username, password, name, role)
-    const [username, password, name, role] = arguments;
+    const username = adminData as string;
     
     // Check if username already exists
     if (admins.some(a => a.username === username)) {
@@ -267,9 +270,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newAdmin: Admin = {
       id: Date.now().toString(),
       username,
-      password,
-      name,
-      role,
+      password: password || '',
+      name: name || '',
+      role: role || 'admin',
       isSuperAdmin: role === 'superadmin',
       isAdmin: true
     };

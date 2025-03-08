@@ -26,8 +26,16 @@ import {
 import { useProducts } from '@/contexts/ProductContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { categories } from '@/data/sampleData';
 import { Product } from '@/types/product';
+
+// Define categories since it's missing from sampleData
+const categories = [
+  "المنظفات المنزلية",
+  "منظفات الملابس",
+  "معطرات الجو",
+  "أدوات التنظيف",
+  "العروض الخاصة"
+];
 
 const AdminProductsPage = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -65,9 +73,9 @@ const AdminProductsPage = () => {
         name: product.name,
         description: product.description,
         price: product.price.toString(),
-        category: product.category,
-        image: product.image,
-        inStock: product.inStock
+        category: product.category || product.categoryId,
+        image: product.image || product.imageUrl,
+        inStock: product.inStock !== undefined ? product.inStock : (product.stock > 0)
       });
       setSelectedProduct(product);
     } else {
@@ -102,8 +110,11 @@ const AdminProductsPage = () => {
         name: formData.name,
         description: formData.description,
         price,
+        categoryId: formData.category,
         category: formData.category,
+        imageUrl: formData.image || '/placeholder.svg',
         image: formData.image || '/placeholder.svg',
+        stock: formData.inStock ? 10 : 0,
         inStock: formData.inStock
       };
       
@@ -136,7 +147,7 @@ const AdminProductsPage = () => {
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (product.category || product.categoryId).toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   return (
@@ -181,7 +192,7 @@ const AdminProductsPage = () => {
                   <td className="p-3">
                     <div className="h-10 w-10 rounded overflow-hidden bg-muted">
                       <img 
-                        src={product.image} 
+                        src={product.image || product.imageUrl} 
                         alt={product.name} 
                         className="h-full w-full object-cover" 
                         onError={(e) => {
@@ -191,15 +202,15 @@ const AdminProductsPage = () => {
                     </div>
                   </td>
                   <td className="p-3 arabic">{product.name}</td>
-                  <td className="p-3 arabic">{product.category}</td>
+                  <td className="p-3 arabic">{product.category || product.categoryId}</td>
                   <td className="p-3 ltr">{product.price.toFixed(2)} ريال</td>
                   <td className="p-3">
                     <span className={`px-2 py-1 rounded-full text-xs ${
-                      product.inStock 
+                      (product.inStock !== undefined ? product.inStock : product.stock > 0)
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
                     } arabic`}>
-                      {product.inStock ? 'متوفر' : 'غير متوفر'}
+                      {(product.inStock !== undefined ? product.inStock : product.stock > 0) ? 'متوفر' : 'غير متوفر'}
                     </span>
                   </td>
                   <td className="p-3">
@@ -296,7 +307,7 @@ const AdminProductsPage = () => {
                       <SelectValue placeholder="اختر التصنيف" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(category => (
+                      {categories.map((category) => (
                         <SelectItem key={category} value={category} className="arabic">
                           {category}
                         </SelectItem>

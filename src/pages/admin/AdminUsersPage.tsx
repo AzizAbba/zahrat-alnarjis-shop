@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -93,7 +92,7 @@ const AdminUsersPage = () => {
         });
         toast.success('تم تحديث المستخدم بنجاح');
       } else {
-        // Add new admin
+        // Add new admin using the object format to match our updated function
         addAdmin({
           id: Date.now().toString(),
           name: formData.name,

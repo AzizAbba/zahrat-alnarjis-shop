@@ -10,6 +10,10 @@ export interface Product {
   stock: number;
   featured?: boolean;
   createdAt?: string;
+  // Add these properties to match AdminProductsPage.tsx usage
+  category?: string;
+  image?: string;
+  inStock?: boolean;
 }
 
 export interface Category {
