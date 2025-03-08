@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -154,7 +155,10 @@ const AdminProductsPage = () => {
   const handleDeleteProduct = () => {
     if (selectedProduct) {
       deleteProduct(selectedProduct.id);
-      toast.success('تم حذف المنتج بنجاح');
+      toast({
+        title: "Success",
+        description: "تم حذف المنتج بنجاح"
+      });
       setIsDeleteDialogOpen(false);
       setSelectedProduct(null);
     }
