@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useProducts } from '@/contexts/ProductContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
 import { Product } from '@/types/product';
 
 // Define categories since it's missing from sampleData
@@ -94,13 +93,21 @@ const AdminProductsPage = () => {
     
     // Validation
     if (!formData.name || !formData.price || !formData.category) {
-      toast.error('الاسم والسعر والتصنيف مطلوبين');
+      toast({
+        title: "Error",
+        description: 'الاسم والسعر والتصنيف مطلوبين',
+        variant: "destructive"
+      });
       return;
     }
     
     const price = parseFloat(formData.price);
     if (isNaN(price) || price <= 0) {
-      toast.error('السعر يجب أن يكون رقماً موجباً');
+      toast({
+        title: "Error",
+        description: 'السعر يجب أن يكون رقماً موجباً',
+        variant: "destructive"
+      });
       return;
     }
     
@@ -121,16 +128,26 @@ const AdminProductsPage = () => {
       if (selectedProduct) {
         // Update existing product
         updateProduct(productData);
-        toast.success('تم تحديث المنتج بنجاح');
+        toast({
+          title: "Success",
+          description: 'تم تحديث المنتج بنجاح'
+        });
       } else {
         // Add new product
         addProduct(productData);
-        toast.success('تم إضافة المنتج بنجاح');
+        toast({
+          title: "Success",
+          description: 'تم إضافة المنتج بنجاح'
+        });
       }
       
       handleCloseDialog();
     } catch (error) {
-      toast.error('حدث خطأ أثناء حفظ المنتج');
+      toast({
+        title: "Error",
+        description: 'حدث خطأ أثناء حفظ المنتج',
+        variant: "destructive"
+      });
     }
   };
   
