@@ -6,13 +6,13 @@ import { toast } from '@/components/ui/use-toast';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  adminOnly?: boolean;
+  requireAdmin?: boolean;
   superAdminOnly?: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  adminOnly = false, 
+  requireAdmin = false, 
   superAdminOnly = false 
 }) => {
   const { isAuthenticated, isAdmin, isSuperAdmin } = useAuth();
@@ -25,7 +25,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         title: "Access denied",
         description: "You must be logged in to access this page",
       });
-    } else if (adminOnly && !isAdmin) {
+    } else if (requireAdmin && !isAdmin) {
       toast({
         variant: "destructive",
         title: "Access denied",
@@ -38,7 +38,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         description: "This area is restricted to super administrators only",
       });
     }
-  }, [isAuthenticated, isAdmin, isSuperAdmin, adminOnly, superAdminOnly]);
+  }, [isAuthenticated, isAdmin, isSuperAdmin, requireAdmin, superAdminOnly]);
 
   // Check authentication
   if (!isAuthenticated) {
@@ -46,7 +46,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Check admin access if required
-  if (adminOnly && !isAdmin) {
+  if (requireAdmin && !isAdmin) {
     return <Navigate to="/" replace />;
   }
 

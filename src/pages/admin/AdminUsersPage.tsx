@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const AdminUsersPage = () => {
-  const { user, adminUsers, addAdmin, updateAdmin, deleteAdmin } = useAuth();
+  const { user, adminUsers, updateAdmin, deleteAdmin, addAdmin } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
@@ -100,7 +100,8 @@ const AdminUsersPage = () => {
           username: formData.username,
           password: formData.password,
           isSuperAdmin: formData.isSuperAdmin,
-          isAdmin: true
+          isAdmin: true,
+          role: formData.isSuperAdmin ? 'superadmin' : 'admin'
         });
         toast.success('تم إضافة المستخدم بنجاح');
       }

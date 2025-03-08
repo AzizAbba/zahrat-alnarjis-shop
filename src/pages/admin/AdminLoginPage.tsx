@@ -1,48 +1,42 @@
 
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Lock, User } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
 
 const AdminLoginPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ username: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { adminLogin } = useAuth();
   const navigate = useNavigate();
   
-  const validateForm = () => {
-    const newErrors = {
-      username: username ? '' : 'اسم المستخدم مطلوب',
-      password: password ? '' : 'كلمة المرور مطلوبة'
-    };
-    
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-    
     setIsLoading(true);
     
     try {
-      const success = await login(username, password, true);
+      // Updated to match expected parameters
+      const success = adminLogin(formData.username, formData.password);
       
       if (success) {
         toast.success('تم تسجيل الدخول بنجاح');
         navigate('/admin');
       } else {
-        toast.error('اسم المستخدم أو كلمة المرور غير صحيحة');
+        toast.error('فشل تسجيل الدخول. يرجى التحقق من اسم المستخدم وكلمة المرور');
       }
     } catch (error) {
       toast.error('حدث خطأ أثناء تسجيل الدخول');
@@ -52,77 +46,83 @@ const AdminLoginPage = () => {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl arabic">منظفات زهر النرجس</CardTitle>
-          <p className="text-muted-foreground arabic">تسجيل الدخول إلى لوحة التحكم</p>
-        </CardHeader>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30">
+      <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-lg border">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight arabic">
+            منظفات زهر النرجس
+          </h1>
+          <p className="text-muted-foreground mt-2 arabic">
+            تسجيل الدخول إلى لوحة التحكم
+          </p>
+        </div>
         
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
             <div className="space-y-1">
-              <Label htmlFor="username" className="arabic">اسم المستخدم</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <Input
-                  id="username"
-                  dir="rtl"
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                    if (errors.username) setErrors({...errors, username: ''});
-                  }}
-                  className={`pl-10 ${errors.username ? 'border-red-500' : ''}`}
-                  placeholder="أدخل اسم المستخدم"
-                  disabled={isLoading}
-                />
-              </div>
-              {errors.username && <p className="text-red-500 text-sm arabic">{errors.username}</p>}
+              <label htmlFor="username" className="block text-sm font-medium arabic">
+                اسم المستخدم
+              </label>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={formData.username}
+                onChange={handleChange}
+                className="dir-ltr"
+                autoComplete="username"
+              />
             </div>
             
             <div className="space-y-1">
-              <Label htmlFor="password" className="arabic">كلمة المرور</Label>
+              <label htmlFor="password" className="block text-sm font-medium arabic">
+                كلمة المرور
+              </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                </div>
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  dir="rtl"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (errors.password) setErrors({...errors, password: ''});
-                  }}
-                  className={`pl-10 ${errors.password ? 'border-red-500' : ''}`}
-                  placeholder="أدخل كلمة المرور"
-                  disabled={isLoading}
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="dir-ltr"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-muted-foreground" />
+                    <EyeOff className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                   ) : (
-                    <Eye className="h-5 w-5 text-muted-foreground" />
+                    <Eye className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
                   )}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-sm arabic">{errors.password}</p>}
             </div>
-            
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+          
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+          </Button>
+        </form>
+        
+        <div className="text-center text-sm text-muted-foreground">
+          <p className="arabic">
+            لتسجيل الدخول استخدم اسم المستخدم: admin
+          </p>
+          <p className="arabic">
+            وكلمة المرور: admin123
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

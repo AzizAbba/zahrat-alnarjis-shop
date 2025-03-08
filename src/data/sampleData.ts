@@ -124,3 +124,6 @@ export const sampleProducts: Product[] = [
     featured: false
   }
 ];
+
+// Export the categories array explicitly to fix import issues
+export const categories = sampleCategories;

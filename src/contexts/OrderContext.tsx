@@ -21,6 +21,15 @@ export interface Order {
   totalAmount: number;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   createdAt: string;
+  // Add missing properties that were referenced in other files
+  totalPrice: number;
+  date: string;
+  customerInfo: {
+    name: string;
+    phone: string;
+    address: string;
+    notes?: string;
+  };
 }
 
 interface OrderContextType {
@@ -29,6 +38,8 @@ interface OrderContextType {
   updateOrderStatus: (id: string, status: Order['status']) => void;
   getOrderById: (id: string) => Order | undefined;
   getUserOrders: (email: string) => Order[];
+  // Add missing method used in CheckoutPage
+  addOrder: (order: any) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -96,13 +107,19 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return orders.filter(order => order.customerEmail === email);
   };
   
+  // Add order function used in CheckoutPage
+  const addOrder = (order: any) => {
+    setOrders(prevOrders => [...prevOrders, order]);
+  };
+  
   return (
     <OrderContext.Provider value={{
       orders,
       createOrder,
       updateOrderStatus,
       getOrderById,
-      getUserOrders
+      getUserOrders,
+      addOrder
     }}>
       {children}
     </OrderContext.Provider>

@@ -34,7 +34,7 @@ const AdminOrdersPage = () => {
     setSelectedOrder(null);
   };
   
-  const handleStatusChange = (status: string) => {
+  const handleStatusChange = (status: 'pending' | 'processing' | 'completed' | 'cancelled') => {
     if (selectedOrder) {
       updateOrderStatus(selectedOrder.id, status);
       toast.success(`تم تحديث حالة الطلب إلى "${status === 'completed' ? 'مكتمل' : status === 'cancelled' ? 'ملغي' : 'قيد الانتظار'}"`);

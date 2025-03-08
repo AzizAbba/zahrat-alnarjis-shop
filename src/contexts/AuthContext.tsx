@@ -12,6 +12,9 @@ export interface User {
   role: UserRole;
   phoneNumber?: string;
   address?: string;
+  // Add missing properties used in AdminLayout
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
 }
 
 export interface Admin {
@@ -20,6 +23,9 @@ export interface Admin {
   password: string;
   role: 'admin' | 'superadmin';
   name: string;
+  // Add property used in AdminUsersPage
+  isSuperAdmin: boolean;
+  isAdmin: boolean;
 }
 
 // Context interface
@@ -36,6 +42,11 @@ interface AuthContextType {
   addAdmin: (username: string, password: string, name: string, role: 'admin' | 'superadmin') => boolean;
   removeAdmin: (id: string) => void;
   updateUser: (user: Partial<User>) => void;
+  // Add missing methods and properties used in AdminUsersPage
+  adminUsers: Admin[];
+  updateAdmin: (admin: Admin) => void;
+  deleteAdmin: (id: string) => void;
+  addAdmin: (admin: any) => void;
 }
 
 // Create context
@@ -47,7 +58,9 @@ const DEFAULT_ADMIN: Admin = {
   username: 'admin',
   password: 'admin123',
   role: 'superadmin',
-  name: 'Super Admin'
+  name: 'Super Admin',
+  isSuperAdmin: true,
+  isAdmin: true
 };
 
 // Mock users for development
@@ -58,7 +71,9 @@ const MOCK_USERS: User[] = [
     email: 'user@example.com',
     role: 'customer',
     phoneNumber: '123456789',
-    address: 'Test Address, City'
+    address: 'Test Address, City',
+    isAdmin: false,
+    isSuperAdmin: false
   }
 ];
 
@@ -108,7 +123,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const foundUser = users.find((u: any) => u.email === email && u.password === password);
     
     if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
+      const userWithoutPassword = { 
+        ...foundUser,
+        isAdmin: false,
+        isSuperAdmin: false
+      };
       delete userWithoutPassword.password;
       
       setUser(userWithoutPassword);
@@ -138,6 +157,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: foundAdmin.name,
         email: username,
         role: foundAdmin.role,
+        isAdmin: true,
+        isSuperAdmin: foundAdmin.role === 'superadmin'
       };
       
       setUser(adminUser);
@@ -177,7 +198,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password, // In a real app, this would be hashed
       role: 'customer' as UserRole,
       phoneNumber,
-      address
+      address,
+      isAdmin: false,
+      isSuperAdmin: false
     };
     
     // Save to localStorage
@@ -197,7 +220,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
   // Add admin function
-  const addAdmin = (username: string, password: string, name: string, role: 'admin' | 'superadmin'): boolean => {
+  const addAdmin = (adminData: any): boolean => {
+    // If it's an object with all properties already set
+    if (typeof adminData === 'object' && adminData.username) {
+      // Check if username already exists
+      if (admins.some(a => a.username === adminData.username)) {
+        toast({
+          variant: "destructive",
+          title: "Failed to add admin",
+          description: "Username already in use",
+        });
+        return false;
+      }
+      
+      // Make sure isSuperAdmin and isAdmin flags are set
+      const newAdmin: Admin = {
+        ...adminData,
+        isAdmin: true,
+        isSuperAdmin: adminData.isSuperAdmin || adminData.role === 'superadmin'
+      };
+      
+      // Update state
+      setAdmins([...admins, newAdmin]);
+      
+      toast({
+        title: "Admin added successfully",
+        description: `${newAdmin.name} has been added as ${newAdmin.role}`,
+      });
+      return true;
+    }
+    
+    // Older signature (username, password, name, role)
+    const [username, password, name, role] = arguments;
+    
     // Check if username already exists
     if (admins.some(a => a.username === username)) {
       toast({
@@ -214,7 +269,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       username,
       password,
       name,
-      role
+      role,
+      isSuperAdmin: role === 'superadmin',
+      isAdmin: true
     };
     
     // Update state
@@ -225,6 +282,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: `${name} has been added as ${role}`,
     });
     return true;
+  };
+  
+  // Update admin function
+  const updateAdmin = (updatedAdmin: Admin) => {
+    setAdmins(prevAdmins => 
+      prevAdmins.map(admin => 
+        admin.id === updatedAdmin.id ? updatedAdmin : admin
+      )
+    );
+    
+    toast({
+      title: "Admin updated",
+      description: "Admin has been updated successfully",
+    });
   };
   
   // Remove admin
@@ -247,6 +318,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: "Admin has been removed successfully",
     });
   };
+  
+  // Alias for removeAdmin to match usage in AdminUsersPage
+  const deleteAdmin = removeAdmin;
   
   // Logout function
   const logout = () => {
@@ -297,7 +371,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register,
       addAdmin,
       removeAdmin,
-      updateUser
+      updateUser,
+      // Additional properties for AdminUsersPage
+      adminUsers: admins,
+      updateAdmin,
+      deleteAdmin
     }}>
       {children}
     </AuthContext.Provider>

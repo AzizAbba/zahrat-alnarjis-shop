@@ -16,6 +16,8 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   totalPrice: number;
+  // Add missing property used in CheckoutPage
+  cart: any[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -105,6 +107,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     0
   );
   
+  // Convert items to the format expected by the CheckoutPage
+  const cart = items.map(item => ({
+    id: item.product.id,
+    name: item.product.name,
+    price: item.product.price,
+    quantity: item.quantity,
+    image: item.product.imageUrl
+  }));
+  
   return (
     <CartContext.Provider value={{
       items,
@@ -113,7 +124,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateQuantity,
       clearCart,
       itemCount,
-      totalPrice
+      totalPrice,
+      cart
     }}>
       {children}
     </CartContext.Provider>
