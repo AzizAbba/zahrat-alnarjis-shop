@@ -1,79 +1,32 @@
+
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { PlusCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import UserTable from '@/components/admin/users/UserTable';
+import UserFormDialog from '@/components/admin/users/UserFormDialog';
+import DeleteConfirmationDialog from '@/components/admin/users/DeleteConfirmationDialog';
+import { Admin } from '@/contexts/AuthContext';
 
 const AdminUsersPage = () => {
   const { user, adminUsers, updateAdmin, deleteAdmin, addAdmin } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    id: '',
-    name: '',
-    username: '',
-    password: '',
-    isSuperAdmin: false
-  });
+  const [selectedUser, setSelectedUser] = useState<Admin | null>(null);
   
-  const resetForm = () => {
-    setFormData({
-      id: '',
-      name: '',
-      username: '',
-      password: '',
-      isSuperAdmin: false
-    });
-    setSelectedUser(null);
-  };
-  
-  const handleOpenDialog = (user: any = null) => {
-    if (user) {
-      setFormData({
-        id: user.id,
-        name: user.name,
-        username: user.username,
-        password: '',
-        isSuperAdmin: user.isSuperAdmin
-      });
-      setSelectedUser(user);
-    } else {
-      resetForm();
-    }
+  const handleOpenDialog = (user: Admin | null = null) => {
+    setSelectedUser(user);
     setIsDialogOpen(true);
   };
   
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    resetForm();
+    setSelectedUser(null);
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = (formData: any) => {
     // Validation
     if (!formData.name || !formData.username || (!selectedUser && !formData.password)) {
       toast.error('جميع الحقول مطلوبة');
@@ -92,7 +45,7 @@ const AdminUsersPage = () => {
         });
         toast.success('تم تحديث المستخدم بنجاح');
       } else {
-        // Add new admin using the object format to match our updated function
+        // Add new admin
         addAdmin({
           id: Date.now().toString(),
           name: formData.name,
@@ -125,6 +78,11 @@ const AdminUsersPage = () => {
     }
   };
   
+  const handleDeleteClick = (user: Admin) => {
+    setSelectedUser(user);
+    setIsDeleteDialogOpen(true);
+  };
+  
   if (!user?.isSuperAdmin) {
     return (
       <AdminLayout>
@@ -148,173 +106,24 @@ const AdminUsersPage = () => {
         </Button>
       </div>
       
-      <div className="bg-card rounded-lg border shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b text-right">
-                <th className="p-3 font-medium arabic">الاسم</th>
-                <th className="p-3 font-medium arabic">اسم المستخدم</th>
-                <th className="p-3 font-medium arabic">كلمة المرور</th>
-                <th className="p-3 font-medium arabic">النوع</th>
-                <th className="p-3 font-medium arabic">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {adminUsers.map((admin) => (
-                <tr key={admin.id} className="border-b text-right">
-                  <td className="p-3 arabic">{admin.name}</td>
-                  <td className="p-3 ltr">{admin.username}</td>
-                  <td className="p-3 ltr">
-                    <span className="font-mono">••••••••</span>
-                  </td>
-                  <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      admin.isSuperAdmin 
-                        ? 'bg-purple-100 text-purple-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    } arabic`}>
-                      {admin.isSuperAdmin ? 'مدير أساسي' : 'مدير'}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center gap-2 justify-end">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleOpenDialog(admin)}
-                      >
-                        <Pencil size={16} />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          setSelectedUser(admin);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              
-              {adminUsers.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="p-4 text-center text-muted-foreground arabic">
-                    لا يوجد مستخدمين
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <UserTable 
+        adminUsers={adminUsers}
+        onEdit={handleOpenDialog}
+        onDelete={handleDeleteClick}
+      />
       
-      {/* Add/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="arabic">
-              {selectedUser ? 'تعديل مستخدم' : 'إضافة مستخدم جديد'}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="arabic">الاسم</Label>
-                <Input
-                  id="name"
-                  dir="rtl"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="أدخل الاسم"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="username" className="arabic">اسم المستخدم</Label>
-                <Input
-                  id="username"
-                  value={formData.username}
-                  onChange={(e) => setFormData({...formData, username: e.target.value})}
-                  placeholder="أدخل اسم المستخدم"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password" className="arabic">
-                  {selectedUser ? 'كلمة المرور (اترك فارغاً للإبقاء على كلمة المرور الحالية)' : 'كلمة المرور'}
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    placeholder={selectedUser ? 'اترك فارغاً للإبقاء على كلمة المرور الحالية' : 'أدخل كلمة المرور'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </button>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isSuperAdmin"
-                  checked={formData.isSuperAdmin}
-                  onCheckedChange={(checked) => 
-                    setFormData({...formData, isSuperAdmin: checked as boolean})
-                  }
-                />
-                <Label htmlFor="isSuperAdmin" className="arabic mr-2">مدير أساسي</Label>
-              </div>
-            </div>
-            
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleCloseDialog}>
-                إلغاء
-              </Button>
-              <Button type="submit">
-                {selectedUser ? 'تحديث' : 'إضافة'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <UserFormDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        onSubmit={handleSubmit}
+        selectedUser={selectedUser}
+      />
       
-      {/* Delete Confirmation */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="arabic">حذف المستخدم</AlertDialogTitle>
-            <AlertDialogDescription className="arabic">
-              هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="arabic">إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground arabic"
-              onClick={handleDeleteUser}
-            >
-              حذف
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteUser}
+      />
     </AdminLayout>
   );
 };
