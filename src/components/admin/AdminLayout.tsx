@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -24,7 +24,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   
   const handleLogout = () => {
     logout();
-    toast.success('تم تسجيل الخروج بنجاح');
+    toast({
+      title: "Logged out",
+      description: 'تم تسجيل الخروج بنجاح'
+    });
     navigate('/admin/login');
   };
   
@@ -41,6 +44,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div className="w-64 bg-sidebar border-r border-sidebar-border hidden md:block">
         <div className="p-4">
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+              alt="زهرة النرجس" 
+              className="h-16" 
+            />
+          </div>
           <h2 className="text-xl font-bold text-sidebar-foreground arabic">لوحة التحكم</h2>
           <p className="text-sm text-sidebar-foreground/70 arabic">مرحباً {user.name}</p>
         </div>
@@ -131,7 +141,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-sidebar border-b border-sidebar-border p-3 z-50">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold text-sidebar-foreground arabic">لوحة التحكم</h2>
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+              alt="زهرة النرجس" 
+              className="h-8 mr-2" 
+            />
+            <h2 className="text-lg font-bold text-sidebar-foreground arabic">لوحة التحكم</h2>
+          </div>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut size={18} />
           </Button>

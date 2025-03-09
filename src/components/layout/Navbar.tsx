@@ -42,6 +42,11 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
           {/* Logo and brand name */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+                alt="زهرة النرجس" 
+                className="h-10 mr-2" 
+              />
               <span className="text-2xl font-bold text-brand-600 arabic">منظفات زهر النرجس</span>
             </Link>
           </div>

@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
 import { Eye, EyeOff } from 'lucide-react';
 
 const AdminLoginPage = () => {
@@ -33,15 +33,21 @@ const AdminLoginPage = () => {
       const success = adminLogin(formData.username, formData.password);
       
       if (success) {
-        toast.success('تم تسجيل الدخول بنجاح');
+        toast({
+          title: "Login successful",
+          description: 'تم تسجيل الدخول بنجاح'
+        });
         navigate('/admin');
       } else {
-        toast.error('فشل تسجيل الدخول. يرجى التحقق من اسم المستخدم وكلمة المرور');
+        setIsLoading(false);
       }
     } catch (error) {
-      toast.error('حدث خطأ أثناء تسجيل الدخول');
-    } finally {
       setIsLoading(false);
+      toast({
+        title: "Login failed",
+        description: 'حدث خطأ أثناء تسجيل الدخول',
+        variant: "destructive"
+      });
     }
   };
   
@@ -49,6 +55,11 @@ const AdminLoginPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30">
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-lg border">
         <div className="text-center">
+          <img 
+            src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+            alt="زهرة النرجس" 
+            className="h-24 mx-auto mb-4"
+          />
           <h1 className="text-2xl font-bold tracking-tight arabic">
             منظفات زهر النرجس
           </h1>
