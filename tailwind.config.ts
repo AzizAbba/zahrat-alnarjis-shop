@@ -75,9 +75,9 @@ export default {
 					800: '#6b21a8',
 					900: '#581c87',
 				},
-				// Yellow-gold color scheme that matches narcissus flower
+				// Yellow-gold color scheme that matches narcissus flower - enhanced
 				narcissus: {
-					50: '#fffdf0',
+					50: '#fffdf5',
 					100: '#fffbe0',
 					200: '#fff6b0',
 					300: '#ffee70',
@@ -87,8 +87,9 @@ export default {
 					700: '#c49c00',
 					800: '#a67e00',
 					900: '#896800',
+					950: '#4a3700',
 				},
-				// Green color scheme for stems and leaves
+				// Green color scheme for stems and leaves - enhanced
 				stem: {
 					50: '#f0fdf4',
 					100: '#dcfce7',
@@ -100,6 +101,7 @@ export default {
 					700: '#15803d',
 					800: '#166534',
 					900: '#14532d',
+					950: '#052e16',
 				}
 			},
 			borderRadius: {
@@ -135,6 +137,10 @@ export default {
 				slideInLeft: {
 					'0%': { transform: 'translateX(-100%)' },
 					'100%': { transform: 'translateX(0)' }
+				},
+				scaleIn: {
+					'0%': { transform: 'scale(0.95)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				}
 			},
 			animation: {
@@ -142,7 +148,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				fadeIn: 'fadeIn 0.5s ease-in-out',
 				slideInRight: 'slideInRight 0.3s ease-out',
-				slideInLeft: 'slideInLeft 0.3s ease-out'
+				slideInLeft: 'slideInLeft 0.3s ease-out',
+				scaleIn: 'scaleIn 0.2s ease-out'
 			}
 		}
 	},

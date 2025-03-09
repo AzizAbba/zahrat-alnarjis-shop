@@ -12,20 +12,20 @@ interface UserTableProps {
 
 const UserTable: React.FC<UserTableProps> = ({ adminUsers, onEdit, onDelete }) => {
   return (
-    <div className="bg-card rounded-lg border shadow-sm">
+    <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b text-right">
-              <th className="p-3 font-medium arabic">الاسم</th>
-              <th className="p-3 font-medium arabic">اسم المستخدم</th>
-              <th className="p-3 font-medium arabic">الصلاحيات</th>
-              <th className="p-3 font-medium arabic">الإجراءات</th>
+            <tr className="bg-narcissus-50 border-b text-right">
+              <th className="p-3 font-medium text-narcissus-800 arabic">الاسم</th>
+              <th className="p-3 font-medium text-narcissus-800 arabic">اسم المستخدم</th>
+              <th className="p-3 font-medium text-narcissus-800 arabic">الصلاحيات</th>
+              <th className="p-3 font-medium text-narcissus-800 arabic">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
             {adminUsers.map((admin) => (
-              <tr key={admin.id} className="border-b text-right">
+              <tr key={admin.id} className="border-b text-right hover:bg-narcissus-50/30 transition-colors">
                 <td className="p-3 arabic">{admin.name}</td>
                 <td className="p-3 ltr">{admin.username}</td>
                 <td className="p-3">
