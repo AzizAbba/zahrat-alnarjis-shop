@@ -2,12 +2,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { toast as sonnerToast } from 'sonner';
-import { Product, Category, Subcategory, DeliveryOption, DeliveryZone } from '@/types/product';
+import { Product, Category, Subcategory, DeliveryOption, DeliveryZone, Size, Color, Smell } from '@/types/product';
 
 // Sample data
 import { sampleProducts, sampleCategories } from '@/data/sampleData';
 
-// Initial subcategories
+// Initial subcategories with Arabic names
 const initialSubcategories: Subcategory[] = [
   {
     id: "sub1",
@@ -36,6 +36,90 @@ const initialSubcategories: Subcategory[] = [
     arabicName: "منعمات الأقمشة",
     categoryId: "cat2",
     description: "منعمات للملابس والأقمشة"
+  }
+];
+
+// Initial sizes
+const initialSizes: Size[] = [
+  {
+    id: "size1",
+    name: "Small",
+    arabicName: "صغير",
+    value: "S"
+  },
+  {
+    id: "size2",
+    name: "Medium",
+    arabicName: "متوسط",
+    value: "M"
+  },
+  {
+    id: "size3",
+    name: "Large",
+    arabicName: "كبير",
+    value: "L"
+  },
+  {
+    id: "size4",
+    name: "Extra Large",
+    arabicName: "كبير جداً",
+    value: "XL"
+  }
+];
+
+// Initial colors
+const initialColors: Color[] = [
+  {
+    id: "color1",
+    name: "Blue",
+    arabicName: "أزرق",
+    hexCode: "#1aa8ff"
+  },
+  {
+    id: "color2",
+    name: "Green",
+    arabicName: "أخضر",
+    hexCode: "#4CAF50"
+  },
+  {
+    id: "color3",
+    name: "Red",
+    arabicName: "أحمر",
+    hexCode: "#F44336"
+  },
+  {
+    id: "color4",
+    name: "Yellow",
+    arabicName: "أصفر",
+    hexCode: "#FFEB3B"
+  }
+];
+
+// Initial smells
+const initialSmells: Smell[] = [
+  {
+    id: "smell1",
+    name: "Floral",
+    arabicName: "زهور",
+    description: "عطر الزهور المنعش"
+  },
+  {
+    id: "smell2",
+    name: "Citrus",
+    arabicName: "حمضيات",
+    description: "رائحة الحمضيات المنعشة"
+  },
+  {
+    id: "smell3",
+    name: "Lavender",
+    arabicName: "خزامى",
+    description: "عطر الخزامى المهدئ"
+  },
+  {
+    id: "smell4",
+    name: "Ocean",
+    arabicName: "بحر",
+    description: "رائحة البحر المنعشة"
   }
 ];
 
@@ -102,6 +186,9 @@ interface ProductContextType {
   products: Product[];
   categories: Category[];
   subcategories: Subcategory[];
+  sizes: Size[];
+  colors: Color[];
+  smells: Smell[];
   deliveryOptions: DeliveryOption[];
   deliveryZones: DeliveryZone[];
   
@@ -116,6 +203,18 @@ interface ProductContextType {
   addSubcategory: (subcategory: Omit<Subcategory, 'id'>) => void;
   updateSubcategory: (id: string, subcategory: Partial<Subcategory>) => void;
   deleteSubcategory: (id: string) => void;
+  
+  addSize: (size: Omit<Size, 'id'>) => void;
+  updateSize: (id: string, size: Partial<Size>) => void;
+  deleteSize: (id: string) => void;
+  
+  addColor: (color: Omit<Color, 'id'>) => void;
+  updateColor: (id: string, color: Partial<Color>) => void;
+  deleteColor: (id: string) => void;
+  
+  addSmell: (smell: Omit<Smell, 'id'>) => void;
+  updateSmell: (id: string, smell: Partial<Smell>) => void;
+  deleteSmell: (id: string) => void;
   
   addDeliveryOption: (option: Omit<DeliveryOption, 'id'>) => void;
   updateDeliveryOption: (id: string, option: Partial<DeliveryOption>) => void;
@@ -135,6 +234,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [sizes, setSizes] = useState<Size[]>([]);
+  const [colors, setColors] = useState<Color[]>([]);
+  const [smells, setSmells] = useState<Smell[]>([]);
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([]);
   const [deliveryZones, setDeliveryZones] = useState<DeliveryZone[]>([]);
   
@@ -143,6 +245,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const storedProducts = localStorage.getItem('products');
     const storedCategories = localStorage.getItem('categories');
     const storedSubcategories = localStorage.getItem('subcategories');
+    const storedSizes = localStorage.getItem('sizes');
+    const storedColors = localStorage.getItem('colors');
+    const storedSmells = localStorage.getItem('smells');
     const storedDeliveryOptions = localStorage.getItem('deliveryOptions');
     const storedDeliveryZones = localStorage.getItem('deliveryZones');
     
@@ -165,6 +270,27 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } else {
       setSubcategories(initialSubcategories);
       localStorage.setItem('subcategories', JSON.stringify(initialSubcategories));
+    }
+    
+    if (storedSizes) {
+      setSizes(JSON.parse(storedSizes));
+    } else {
+      setSizes(initialSizes);
+      localStorage.setItem('sizes', JSON.stringify(initialSizes));
+    }
+    
+    if (storedColors) {
+      setColors(JSON.parse(storedColors));
+    } else {
+      setColors(initialColors);
+      localStorage.setItem('colors', JSON.stringify(initialColors));
+    }
+    
+    if (storedSmells) {
+      setSmells(JSON.parse(storedSmells));
+    } else {
+      setSmells(initialSmells);
+      localStorage.setItem('smells', JSON.stringify(initialSmells));
     }
     
     if (storedDeliveryOptions) {
@@ -194,6 +320,18 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     localStorage.setItem('subcategories', JSON.stringify(subcategories));
   }, [subcategories]);
+  
+  useEffect(() => {
+    localStorage.setItem('sizes', JSON.stringify(sizes));
+  }, [sizes]);
+  
+  useEffect(() => {
+    localStorage.setItem('colors', JSON.stringify(colors));
+  }, [colors]);
+  
+  useEffect(() => {
+    localStorage.setItem('smells', JSON.stringify(smells));
+  }, [smells]);
   
   useEffect(() => {
     localStorage.setItem('deliveryOptions', JSON.stringify(deliveryOptions));
@@ -342,6 +480,153 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   };
   
+  // Size Functions
+  const addSize = (size: Omit<Size, 'id'>) => {
+    const newSize: Size = {
+      ...size,
+      id: Date.now().toString()
+    };
+    
+    setSizes(prevSizes => [...prevSizes, newSize]);
+    
+    toast({
+      title: "Size Added",
+      description: `${size.name} has been added successfully`,
+    });
+  };
+  
+  const updateSize = (id: string, size: Partial<Size>) => {
+    setSizes(prevSizes => 
+      prevSizes.map(s => 
+        s.id === id ? { ...s, ...size } : s
+      )
+    );
+    
+    toast({
+      title: "Size Updated",
+      description: "Size has been updated successfully",
+    });
+  };
+  
+  const deleteSize = (id: string) => {
+    // Check if any products are using this size
+    const productsWithSize = products.filter(p => p.sizeId === id);
+    
+    if (productsWithSize.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Cannot Delete Size",
+        description: "This size is in use by products",
+      });
+      return;
+    }
+    
+    setSizes(prevSizes => prevSizes.filter(s => s.id !== id));
+    
+    toast({
+      title: "Size Deleted",
+      description: "Size has been deleted successfully",
+    });
+  };
+  
+  // Color Functions
+  const addColor = (color: Omit<Color, 'id'>) => {
+    const newColor: Color = {
+      ...color,
+      id: Date.now().toString()
+    };
+    
+    setColors(prevColors => [...prevColors, newColor]);
+    
+    toast({
+      title: "Color Added",
+      description: `${color.name} has been added successfully`,
+    });
+  };
+  
+  const updateColor = (id: string, color: Partial<Color>) => {
+    setColors(prevColors => 
+      prevColors.map(c => 
+        c.id === id ? { ...c, ...color } : c
+      )
+    );
+    
+    toast({
+      title: "Color Updated",
+      description: "Color has been updated successfully",
+    });
+  };
+  
+  const deleteColor = (id: string) => {
+    // Check if any products are using this color
+    const productsWithColor = products.filter(p => p.colorId === id);
+    
+    if (productsWithColor.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Cannot Delete Color",
+        description: "This color is in use by products",
+      });
+      return;
+    }
+    
+    setColors(prevColors => prevColors.filter(c => c.id !== id));
+    
+    toast({
+      title: "Color Deleted",
+      description: "Color has been deleted successfully",
+    });
+  };
+  
+  // Smell Functions
+  const addSmell = (smell: Omit<Smell, 'id'>) => {
+    const newSmell: Smell = {
+      ...smell,
+      id: Date.now().toString()
+    };
+    
+    setSmells(prevSmells => [...prevSmells, newSmell]);
+    
+    toast({
+      title: "Smell Added",
+      description: `${smell.name} has been added successfully`,
+    });
+  };
+  
+  const updateSmell = (id: string, smell: Partial<Smell>) => {
+    setSmells(prevSmells => 
+      prevSmells.map(s => 
+        s.id === id ? { ...s, ...smell } : s
+      )
+    );
+    
+    toast({
+      title: "Smell Updated",
+      description: "Smell has been updated successfully",
+    });
+  };
+  
+  const deleteSmell = (id: string) => {
+    // Check if any products are using this smell
+    const productsWithSmell = products.filter(p => p.smellId === id);
+    
+    if (productsWithSmell.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Cannot Delete Smell",
+        description: "This smell is in use by products",
+      });
+      return;
+    }
+    
+    setSmells(prevSmells => prevSmells.filter(s => s.id !== id));
+    
+    toast({
+      title: "Smell Deleted",
+      description: "Smell has been deleted successfully",
+    });
+  };
+  
   // Delivery Option Functions
   const addDeliveryOption = (option: Omit<DeliveryOption, 'id'>) => {
     const newOption: DeliveryOption = {
@@ -422,6 +707,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (data.products) setProducts(data.products);
       if (data.categories) setCategories(data.categories);
       if (data.subcategories) setSubcategories(data.subcategories);
+      if (data.sizes) setSizes(data.sizes);
+      if (data.colors) setColors(data.colors);
+      if (data.smells) setSmells(data.smells);
       if (data.deliveryOptions) setDeliveryOptions(data.deliveryOptions);
       if (data.deliveryZones) setDeliveryZones(data.deliveryZones);
       
@@ -443,6 +731,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       products,
       categories,
       subcategories,
+      sizes,
+      colors,
+      smells,
       deliveryOptions,
       deliveryZones
     };
@@ -453,6 +744,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       products,
       categories,
       subcategories,
+      sizes,
+      colors,
+      smells,
       deliveryOptions,
       deliveryZones,
       
@@ -467,6 +761,18 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       addSubcategory,
       updateSubcategory,
       deleteSubcategory,
+      
+      addSize,
+      updateSize,
+      deleteSize,
+      
+      addColor,
+      updateColor,
+      deleteColor,
+      
+      addSmell,
+      updateSmell,
+      deleteSmell,
       
       addDeliveryOption,
       updateDeliveryOption,

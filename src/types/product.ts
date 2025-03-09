@@ -8,6 +8,9 @@ export interface Product {
   imageUrl: string;
   categoryId: string;
   subcategoryId?: string;
+  sizeId?: string;
+  colorId?: string;
+  smellId?: string;
   stock: number;
   featured?: boolean;
   createdAt?: string;
@@ -33,6 +36,30 @@ export interface Subcategory {
   categoryId: string; // Parent category ID
   description?: string;
   imageUrl?: string;
+  displayOrder?: number;
+}
+
+export interface Size {
+  id: string;
+  name: string;
+  arabicName?: string;
+  value: string;
+  displayOrder?: number;
+}
+
+export interface Color {
+  id: string;
+  name: string;
+  arabicName?: string;
+  hexCode: string;
+  displayOrder?: number;
+}
+
+export interface Smell {
+  id: string;
+  name: string;
+  arabicName?: string;
+  description?: string;
   displayOrder?: number;
 }
 
