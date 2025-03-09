@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, UserCog } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import UserTable from '@/components/admin/users/UserTable';
@@ -41,7 +41,8 @@ const AdminUsersPage = () => {
           name: formData.name,
           username: formData.username,
           password: formData.password || selectedUser.password,
-          isSuperAdmin: formData.isSuperAdmin
+          isSuperAdmin: formData.isSuperAdmin,
+          role: formData.isSuperAdmin ? 'superadmin' : 'admin'
         });
         toast.success('تم تحديث المستخدم بنجاح');
       } else {
@@ -86,7 +87,8 @@ const AdminUsersPage = () => {
   if (!user?.isSuperAdmin) {
     return (
       <AdminLayout>
-        <div className="text-center p-12">
+        <div className="text-center p-12 bg-card rounded-lg shadow-sm border animate-fadeIn">
+          <UserCog className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-2xl font-bold arabic">غير مصرح بالوصول</h1>
           <p className="text-muted-foreground arabic mt-2">
             لا تملك صلاحيات كافية للوصول إلى هذه الصفحة
@@ -98,19 +100,29 @@ const AdminUsersPage = () => {
   
   return (
     <AdminLayout>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold arabic">إدارة المستخدمين</h1>
-        <Button onClick={() => handleOpenDialog()} className="flex items-center gap-2">
-          <PlusCircle size={16} />
-          <span className="arabic">إضافة مستخدم</span>
-        </Button>
+      <div className="bg-card p-6 rounded-lg shadow-sm border mb-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold arabic">إدارة المستخدمين</h1>
+            <p className="text-muted-foreground text-sm arabic mt-1">
+              يمكنك إضافة، تعديل، وحذف المستخدمين المسؤولين عن إدارة الموقع
+            </p>
+          </div>
+          <Button 
+            onClick={() => handleOpenDialog()} 
+            className="flex items-center gap-2 bg-narcissus-600 hover:bg-narcissus-700"
+          >
+            <PlusCircle size={16} />
+            <span className="arabic">إضافة مستخدم</span>
+          </Button>
+        </div>
+        
+        <UserTable 
+          adminUsers={adminUsers}
+          onEdit={handleOpenDialog}
+          onDelete={handleDeleteClick}
+        />
       </div>
-      
-      <UserTable 
-        adminUsers={adminUsers}
-        onEdit={handleOpenDialog}
-        onDelete={handleDeleteClick}
-      />
       
       <UserFormDialog
         isOpen={isDialogOpen}

@@ -77,16 +77,16 @@ export default {
 				},
 				// Yellow-gold color scheme that matches narcissus flower
 				narcissus: {
-					50: '#fefce8',
-					100: '#fef9c3',
-					200: '#fef08a',
-					300: '#fde047',
-					400: '#facc15',
-					500: '#eab308',
-					600: '#ca8a04',
-					700: '#a16207',
-					800: '#854d0e',
-					900: '#713f12',
+					50: '#fffdf0',
+					100: '#fffbe0',
+					200: '#fff6b0',
+					300: '#ffee70',
+					400: '#ffdf20',
+					500: '#ffd700', // Narcissus yellow/gold
+					600: '#e6c200',
+					700: '#c49c00',
+					800: '#a67e00',
+					900: '#896800',
 				},
 				// Green color scheme for stems and leaves
 				stem: {

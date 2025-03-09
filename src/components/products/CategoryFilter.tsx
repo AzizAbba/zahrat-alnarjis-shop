@@ -15,18 +15,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const { categories } = useProducts();
   
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-      <h2 className="text-lg font-semibold mb-3">Categories</h2>
+    <div className="bg-card rounded-lg shadow-sm p-4 mb-6 border">
+      <h2 className="text-lg font-semibold mb-3 arabic">التصنيفات</h2>
       
       <ul className="space-y-2">
         <li>
           <button 
             onClick={() => onSelectCategory(null)}
-            className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-              selectedCategory === null ? 'bg-brand-100 text-brand-700 font-medium' : 'hover:bg-gray-100'
+            className={`w-full text-right px-3 py-2 rounded-md transition-colors ${
+              selectedCategory === null ? 'bg-narcissus-100 text-narcissus-800 font-medium' : 'hover:bg-gray-100'
             }`}
           >
-            All Products
+            <span className="arabic">جميع المنتجات</span>
           </button>
         </li>
         
@@ -34,13 +34,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <li key={category.id}>
             <button 
               onClick={() => onSelectCategory(category.id)}
-              className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                selectedCategory === category.id ? 'bg-brand-100 text-brand-700 font-medium' : 'hover:bg-gray-100'
+              className={`w-full text-right px-3 py-2 rounded-md transition-colors ${
+                selectedCategory === category.id ? 'bg-narcissus-100 text-narcissus-800 font-medium' : 'hover:bg-gray-100'
               }`}
             >
-              <span className="ltr">{category.name}</span>
-              {category.arabicName && (
-                <span className="block text-sm text-gray-500 arabic">{category.arabicName}</span>
+              {category.arabicName ? (
+                <span className="arabic">{category.arabicName}</span>
+              ) : (
+                <span className="ltr">{category.name}</span>
               )}
             </button>
           </li>

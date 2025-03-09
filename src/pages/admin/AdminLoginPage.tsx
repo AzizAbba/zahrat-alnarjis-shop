@@ -124,15 +124,6 @@ const AdminLoginPage = () => {
             {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
           </Button>
         </form>
-        
-        <div className="text-center text-sm text-muted-foreground">
-          <p className="arabic">
-            لتسجيل الدخول استخدم اسم المستخدم: admin
-          </p>
-          <p className="arabic">
-            وكلمة المرور: admin123
-          </p>
-        </div>
       </div>
     </div>
   );
