@@ -53,6 +53,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Save cart to localStorage
     localStorage.setItem('cart', JSON.stringify(items));
+    
+    // Log for debugging
+    console.log("Cart updated:", { items, count, price });
   }, [items]);
   
   // Add a product to the cart
@@ -63,32 +66,42 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Check if item already exists in cart
       const existingItem = prevItems.find(item => item.product.id === product.id);
       
+      let newItems;
       if (existingItem) {
         // Update quantity if item exists
-        return prevItems.map(item => 
+        newItems = prevItems.map(item => 
           item.product.id === product.id 
             ? { ...item, quantity: item.quantity + quantity } 
             : item
         );
       } else {
         // Add new item if it doesn't exist
-        return [...prevItems, { product, quantity }];
+        newItems = [...prevItems, { product, quantity }];
       }
+      
+      // Debug log
+      console.log("Adding to cart:", { product, quantity, newItems });
+      
+      return newItems;
     });
     
     toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart`,
+      title: "أضيف إلى السلة",
+      description: `تم إضافة ${product.arabicName || product.name} إلى سلة التسوق`,
     });
   };
   
   // Remove a product from the cart
   const removeFromCart = (productId: string) => {
-    setItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+    setItems(prevItems => {
+      const newItems = prevItems.filter(item => item.product.id !== productId);
+      console.log("Removing from cart:", { productId, newItems });
+      return newItems;
+    });
     
     toast({
-      title: "Removed from cart",
-      description: "Item has been removed from your cart",
+      title: "تمت الإزالة من السلة",
+      description: "تم إزالة المنتج من سلة التسوق",
     });
   };
   
@@ -99,21 +112,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     
-    setItems(prevItems => 
-      prevItems.map(item => 
+    setItems(prevItems => {
+      const newItems = prevItems.map(item => 
         item.product.id === productId 
           ? { ...item, quantity } 
           : item
-      )
-    );
+      );
+      console.log("Updating quantity:", { productId, quantity, newItems });
+      return newItems;
+    });
   };
   
   // Clear the entire cart
   const clearCart = () => {
     setItems([]);
+    console.log("Cart cleared");
     toast({
-      title: "Cart cleared",
-      description: "All items have been removed from your cart",
+      title: "تم مسح السلة",
+      description: "تم إزالة جميع المنتجات من سلة التسوق",
     });
   };
   

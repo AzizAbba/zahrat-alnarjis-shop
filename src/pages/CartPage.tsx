@@ -17,8 +17,8 @@ const CartPage: React.FC = () => {
       updateQuantity(productId, currentQuantity + 1);
     } else {
       toast({
-        title: "Maximum quantity reached",
-        description: "Cannot add more of this product",
+        title: "تم الوصول للحد الأقصى",
+        description: "لا يمكن إضافة المزيد من هذا المنتج",
         variant: "destructive"
       });
     }
@@ -92,7 +92,7 @@ const CartPage: React.FC = () => {
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="mx-3">{item.quantity}</span>
+                            <span className="mx-3 font-bold">{item.quantity}</span>
                             <Button 
                               variant="outline" 
                               size="icon" 
@@ -115,7 +115,7 @@ const CartPage: React.FC = () => {
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="mx-3">{item.quantity}</span>
+                        <span className="mx-3 font-bold">{item.quantity}</span>
                         <Button 
                           variant="outline" 
                           size="icon" 
@@ -146,7 +146,7 @@ const CartPage: React.FC = () => {
                   ))}
                 </div>
                 
-                <div className="p-4 bg-gray-50 flex justify-between">
+                <div className="p-4 bg-gray-50 flex flex-col sm:flex-row gap-3 sm:justify-between">
                   <Button 
                     variant="outline" 
                     onClick={clearCart}
@@ -168,13 +168,13 @@ const CartPage: React.FC = () => {
             </div>
             
             <div className="md:col-span-1">
-              <div className="bg-white rounded-lg border shadow-sm p-6 sticky top-6">
+              <div className="bg-white rounded-lg border shadow-sm p-6 sticky top-20">
                 <h2 className="text-xl font-bold mb-4 arabic">ملخص الطلب</h2>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-600 arabic">إجمالي المنتجات:</span>
-                    <span>{totalPrice.toFixed(2)} ريال</span>
+                    <span className="font-semibold">{totalPrice.toFixed(2)} ريال</span>
                   </div>
                   
                   <div className="flex justify-between">
@@ -190,14 +190,25 @@ const CartPage: React.FC = () => {
                   </div>
                 </div>
                 
-                <Button 
-                  className="w-full mb-3"
-                  onClick={() => navigate('/checkout')}
-                >
-                  <span className="arabic">الدفع والتوصيل</span>
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    className="w-full"
+                    onClick={() => navigate('/checkout')}
+                    size="lg"
+                  >
+                    <span className="arabic">الدفع والتوصيل</span>
+                  </Button>
+                  
+                  <Button 
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => navigate('/products')}
+                  >
+                    <span className="arabic">إضافة المزيد من المنتجات</span>
+                  </Button>
+                </div>
                 
-                <p className="text-sm text-center text-gray-500 arabic">
+                <p className="text-sm text-center text-gray-500 mt-4 arabic">
                   بالضغط على زر الدفع والتوصيل أنت توافق على 
                   <Link to="/terms" className="underline mx-1 text-red-600">
                     سياسة الاستخدام
