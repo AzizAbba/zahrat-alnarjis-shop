@@ -20,6 +20,8 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import SettingsPage from "./pages/admin/SettingsPage";
+import MessagesPage from "./pages/admin/MessagesPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProductProvider } from "./contexts/ProductContext";
@@ -41,7 +43,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/products" element={<ProductsPage />} />
-                  <Route path="/product/:id" element={<ProductDetailPage />} />
+                  <Route path="/product/:productId" element={<ProductDetailPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />
                   <Route path="/about" element={<AboutPage />} />
@@ -80,6 +82,22 @@ const App = () => (
                     element={
                       <ProtectedRoute requireAdmin>
                         <AdminUsersPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/settings" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <SettingsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/messages" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <MessagesPage />
                       </ProtectedRoute>
                     } 
                   />

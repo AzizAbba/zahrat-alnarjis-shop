@@ -6,6 +6,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { Button } from '@/components/ui/button';
 import { useProducts } from '@/contexts/ProductContext';
 import { Category } from '@/types/product';
+import { ShoppingBag, Truck, ThumbsUp, Award, Star, ArrowRight, Heart, Sparkles } from 'lucide-react';
 
 const HomePage: React.FC = () => {
   const { products, categories } = useProducts();
@@ -20,50 +21,53 @@ const HomePage: React.FC = () => {
   return (
     <MainLayout>
       {/* Hero section */}
-      <section className="bg-gradient-to-r from-brand-700 to-brand-500 text-white py-16">
+      <section className="bg-gradient-to-r from-narcissus-700 to-narcissus-500 text-white py-16">
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
           <div className="order-2 md:order-1">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Quality Cleaning Products for Your Home
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 arabic">
+              منتجات تنظيف عالية الجودة لمنزلك
             </h1>
-            <p className="text-lg opacity-90 mb-8">
-              Discover our premium range of cleaning solutions that make cleaning easier and more effective.
+            <p className="text-lg opacity-90 mb-8 arabic">
+              اكتشف مجموعتنا المتميزة من منتجات التنظيف التي تجعل التنظيف أسهل وأكثر فعالية.
             </p>
             <div className="flex space-x-4">
               <Button 
                 size="lg" 
                 onClick={() => navigate('/products')}
-                className="bg-white text-brand-700 hover:bg-gray-100"
+                className="bg-white text-narcissus-700 hover:bg-gray-100 arabic"
               >
-                Shop Now
+                تسوق الآن
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
                 onClick={() => navigate('/about')}
-                className="border-white text-white hover:bg-white hover:text-brand-700"
+                className="border-white text-white hover:bg-white hover:text-narcissus-700 arabic"
               >
-                Learn More
+                اقرأ المزيد
               </Button>
             </div>
           </div>
           <div className="order-1 md:order-2">
             <img 
               src="https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
-              alt="Cleaning products" 
-              className="w-full h-auto rounded-lg shadow-lg"
+              alt="منتجات التنظيف" 
+              className="w-full h-auto rounded-lg shadow-lg border-4 border-white/20"
             />
           </div>
         </div>
       </section>
       
       {/* Featured products section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-narcissus-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Featured Products</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our most popular and effective cleaning solutions, perfect for every home.
+            <div className="inline-block mb-2">
+              <Sparkles className="h-10 w-10 text-narcissus-500" />
+            </div>
+            <h2 className="text-3xl font-bold mb-4 arabic">منتجات مميزة</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto arabic">
+              منتجات التنظيف الأكثر شعبية وفعالية، مثالية لكل منزل.
             </p>
           </div>
           
@@ -77,20 +81,111 @@ const HomePage: React.FC = () => {
             <Button 
               size="lg" 
               onClick={() => navigate('/products')}
+              className="bg-narcissus-600 hover:bg-narcissus-700 text-white arabic"
             >
-              View All Products
+              عرض جميع المنتجات
+              <ArrowRight className="mr-2 h-4 w-4" />
             </Button>
           </div>
         </div>
       </section>
       
+      {/* Learn More Improved Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 arabic">لماذا تختار منتجاتنا؟</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto arabic">
+              منتجات زهرة النرجس هي الخيار الأمثل لتنظيف منزلك بكفاءة عالية وبطريقة آمنة للبيئة.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-lg shadow-md border border-narcissus-100 hover:shadow-lg transition-shadow duration-300 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-narcissus-100 text-narcissus-600 rounded-full mb-6">
+                <ThumbsUp className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 arabic">جودة عالية</h3>
+              <p className="text-gray-600 arabic">
+                منتجاتنا مصنوعة من أفضل المواد عالية الجودة لضمان نتائج تنظيف ممتازة في كل مرة تستخدمها.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-lg shadow-md border border-narcissus-100 hover:shadow-lg transition-shadow duration-300 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-stem-100 text-stem-600 rounded-full mb-6">
+                <Heart className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 arabic">صديقة للبيئة</h3>
+              <p className="text-gray-600 arabic">
+                نحن نهتم بالبيئة، لذلك نستخدم مكونات قابلة للتحلل ونقلل من استخدام البلاستيك في تغليف منتجاتنا.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-lg shadow-md border border-narcissus-100 hover:shadow-lg transition-shadow duration-300 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-narcissus-100 text-narcissus-600 rounded-full mb-6">
+                <Award className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 arabic">فعالية مضمونة</h3>
+              <p className="text-gray-600 arabic">
+                تم اختبار جميع منتجاتنا بدقة لضمان أنها تزيل البقع والأوساخ العنيدة بكفاءة عالية.
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-16 bg-narcissus-600 text-white rounded-xl overflow-hidden">
+            <div className="grid md:grid-cols-2">
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-4 arabic">كيف تعمل منتجاتنا؟</h3>
+                <p className="mb-6 arabic">
+                  تعتمد منتجاتنا على تركيبات متطورة تستهدف البقع والأوساخ بشكل فعال مع الحفاظ على سلامة الأسطح والأنسجة.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center">
+                    <div className="bg-white rounded-full p-1 mr-3">
+                      <Star className="h-4 w-4 text-narcissus-600" />
+                    </div>
+                    <span className="arabic">تفكيك البقع العنيدة بسهولة</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="bg-white rounded-full p-1 mr-3">
+                      <Star className="h-4 w-4 text-narcissus-600" />
+                    </div>
+                    <span className="arabic">تنظيف عميق للأسطح المختلفة</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="bg-white rounded-full p-1 mr-3">
+                      <Star className="h-4 w-4 text-narcissus-600" />
+                    </div>
+                    <span className="arabic">روائح منعشة تدوم طويلاً</span>
+                  </li>
+                </ul>
+                <Button 
+                  className="mt-8 bg-white text-narcissus-700 hover:bg-narcissus-50 self-start arabic"
+                  onClick={() => navigate('/about')}
+                >
+                  اقرأ المزيد
+                  <ArrowRight className="mr-2 h-4 w-4" />
+                </Button>
+              </div>
+              <div className="hidden md:block">
+                <img 
+                  src="https://images.pexels.com/photos/4239031/pexels-photo-4239031.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                  alt="كيف تعمل منتجاتنا" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Categories section */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Product Categories</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse our range of cleaning products by category.
+            <h2 className="text-3xl font-bold mb-4 arabic">تصنيفات المنتجات</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto arabic">
+              تصفح مجموعة منتجاتنا حسب التصنيف
             </p>
           </div>
           
@@ -103,46 +198,90 @@ const HomePage: React.FC = () => {
       </section>
       
       {/* Testimonials section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Read testimonials from our satisfied customers.
+            <h2 className="text-3xl font-bold mb-4 arabic">آراء عملائنا</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto arabic">
+              اقرأ تجارب عملائنا السعداء مع منتجاتنا
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <TestimonialCard 
-              name="Ahmed Ali"
-              text="The floor cleaner is amazing! My tiles have never looked so clean and shiny."
+              name="أحمد علي"
+              text="منظف الأرضيات رائع! لم تبدو البلاط الخاص بي نظيفاً ولامعاً بهذا الشكل من قبل."
             />
             <TestimonialCard 
-              name="Fatima Hassan"
-              text="I've tried many kitchen cleaners but this one is by far the best at removing grease."
+              name="فاطمة حسن"
+              text="لقد جربت العديد من منظفات المطبخ ولكن هذا المنتج هو الأفضل بلا شك في إزالة الدهون."
               featured
             />
             <TestimonialCard 
-              name="Mohammed Karim"
-              text="Great quality products with quick delivery. Will definitely order again!"
+              name="محمد كريم"
+              text="منتجات عالية الجودة مع سرعة في التوصيل. سأطلب منكم مرة أخرى بالتأكيد!"
             />
           </div>
         </div>
       </section>
       
+      {/* Features section */}
+      <section className="py-16 bg-narcissus-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold mb-4 arabic">مميزات التسوق معنا</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="p-4">
+              <div className="mx-auto w-12 h-12 flex items-center justify-center bg-narcissus-100 text-narcissus-600 rounded-full mb-3">
+                <Truck className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold mb-1 arabic">توصيل سريع</h3>
+              <p className="text-sm text-gray-600 arabic">شحن سريع لجميع أنحاء المملكة</p>
+            </div>
+            
+            <div className="p-4">
+              <div className="mx-auto w-12 h-12 flex items-center justify-center bg-narcissus-100 text-narcissus-600 rounded-full mb-3">
+                <ShoppingBag className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold mb-1 arabic">منتجات متنوعة</h3>
+              <p className="text-sm text-gray-600 arabic">تشكيلة واسعة من منتجات التنظيف</p>
+            </div>
+            
+            <div className="p-4">
+              <div className="mx-auto w-12 h-12 flex items-center justify-center bg-narcissus-100 text-narcissus-600 rounded-full mb-3">
+                <ThumbsUp className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold mb-1 arabic">جودة مضمونة</h3>
+              <p className="text-sm text-gray-600 arabic">منتجات عالية الجودة بضمان الرضا</p>
+            </div>
+            
+            <div className="p-4">
+              <div className="mx-auto w-12 h-12 flex items-center justify-center bg-narcissus-100 text-narcissus-600 rounded-full mb-3">
+                <Star className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold mb-1 arabic">خدمة ممتازة</h3>
+              <p className="text-sm text-gray-600 arabic">دعم العملاء على مدار الساعة</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Call to action */}
-      <section className="py-16 bg-brand-600 text-white">
+      <section className="py-16 bg-narcissus-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Start Shopping Today</h2>
-          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-            Discover our premium cleaning products and make your home sparkle with less effort.
+          <h2 className="text-3xl font-bold mb-4 arabic">ابدأ التسوق اليوم</h2>
+          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto arabic">
+            اكتشف منتجات التنظيف المتميزة واجعل منزلك يتألق بجهد أقل.
           </p>
           <Button 
             size="lg" 
             onClick={() => navigate('/products')}
-            className="bg-white text-brand-700 hover:bg-gray-100"
+            className="bg-white text-narcissus-700 hover:bg-gray-100 arabic"
           >
-            Browse Products
+            تصفح المنتجات
+            <ArrowRight className="mr-2 h-4 w-4" />
           </Button>
         </div>
       </section>
@@ -156,7 +295,7 @@ const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
   
   return (
     <div 
-      className="group rounded-lg overflow-hidden shadow-md relative cursor-pointer"
+      className="group rounded-lg overflow-hidden shadow-md border border-narcissus-100 relative cursor-pointer"
       onClick={() => navigate(`/products?category=${category.id}`)}
     >
       <div className="aspect-video">
@@ -168,10 +307,20 @@ const CategoryCard: React.FC<{ category: Category }> = ({ category }) => {
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
         <div>
-          <h3 className="text-white text-xl font-bold ltr">{category.name}</h3>
-          {category.arabicName && (
-            <p className="text-white/80 arabic">{category.arabicName}</p>
-          )}
+          <h3 className="text-white text-xl font-bold arabic">
+            {category.arabicName || category.name}
+          </h3>
+          <Button 
+            variant="link" 
+            className="text-narcissus-200 hover:text-white p-0 h-auto arabic"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/products?category=${category.id}`);
+            }}
+          >
+            عرض المنتجات
+            <ArrowRight className="mr-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
@@ -185,23 +334,21 @@ const TestimonialCard: React.FC<{
   featured?: boolean 
 }> = ({ name, text, featured }) => {
   return (
-    <div className={`p-6 rounded-lg ${featured ? 'bg-brand-50 border border-brand-200' : 'bg-white shadow-md'}`}>
+    <div className={`p-6 rounded-lg ${
+      featured 
+        ? 'bg-narcissus-50 border border-narcissus-200 shadow-md' 
+        : 'bg-white border border-gray-200 shadow-sm'
+    }`}>
       <div className="flex items-center space-x-2 mb-4">
         {[1, 2, 3, 4, 5].map(star => (
-          <svg 
+          <Star 
             key={star} 
-            className="w-5 h-5 text-yellow-400" 
-            fill="currentColor" 
-            viewBox="0 0 20 20"
-          >
-            <path 
-              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-            />
-          </svg>
+            className="w-5 h-5 fill-narcissus-400 text-narcissus-400" 
+          />
         ))}
       </div>
-      <p className="text-gray-700 mb-4">{text}</p>
-      <p className="font-medium">{name}</p>
+      <p className="text-gray-700 mb-4 arabic">{text}</p>
+      <p className="font-medium arabic">{name}</p>
     </div>
   );
 };

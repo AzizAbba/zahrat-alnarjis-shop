@@ -8,10 +8,20 @@ import {
   Users, 
   ClipboardList,
   Settings,
-  LogOut
+  LogOut,
+  MessageSquare,
+  Home
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from '@/components/ui/use-toast';
 
 interface AdminLayoutProps {
@@ -34,7 +44,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   if (!user || !user.isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p>غير مصرح بالدخول</p>
+        <p className="arabic">غير مصرح بالدخول</p>
       </div>
     );
   }
@@ -42,7 +52,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="w-64 bg-sidebar border-r border-sidebar-border hidden md:block">
+      <div className="w-64 bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border hidden md:flex md:flex-col">
         <div className="p-4">
           <div className="flex items-center justify-center mb-4">
             <img 
@@ -57,7 +67,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         
         <Separator className="bg-sidebar-border" />
         
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
           <NavLink to="/admin" end
             className={({ isActive }) => 
               `flex items-center gap-2 p-2 rounded-md ${
@@ -97,6 +107,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <span className="arabic">الطلبات</span>
           </NavLink>
           
+          <NavLink to="/admin/messages"
+            className={({ isActive }) => 
+              `flex items-center gap-2 p-2 rounded-md ${
+                isActive 
+                  ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent'
+              }`
+            }
+          >
+            <MessageSquare size={18} />
+            <span className="arabic">الرسائل</span>
+          </NavLink>
+          
           {user.isSuperAdmin && (
             <NavLink to="/admin/users"
               className={({ isActive }) => 
@@ -126,20 +149,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </NavLink>
         </nav>
         
-        <div className="p-4 mt-auto">
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center gap-2 bg-sidebar-accent"
-            onClick={handleLogout}
-          >
-            <LogOut size={16} />
-            <span className="arabic">تسجيل الخروج</span>
-          </Button>
+        <div className="p-4 border-t border-sidebar-border">
+          <div className="flex gap-2 mb-3">
+            <Button 
+              variant="outline" 
+              className="w-1/2 flex items-center gap-2 bg-sidebar-accent"
+              onClick={() => navigate('/')}
+            >
+              <Home size={16} />
+              <span className="arabic">المتجر</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-1/2 flex items-center gap-2 bg-sidebar-accent"
+              onClick={handleLogout}
+            >
+              <LogOut size={16} />
+              <span className="arabic">خروج</span>
+            </Button>
+          </div>
         </div>
       </div>
       
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-sidebar border-b border-sidebar-border p-3 z-50">
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-sidebar-background border-b border-sidebar-border p-3 z-50">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <img 
@@ -149,9 +183,28 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             />
             <h2 className="text-lg font-bold text-sidebar-foreground arabic">لوحة التحكم</h2>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut size={18} />
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <div className="w-8 h-8 bg-narcissus-500 rounded-full flex items-center justify-center text-white font-bold">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel className="arabic">الحساب</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/')} className="arabic cursor-pointer">
+                <Home className="mr-2 h-4 w-4" />
+                زيارة المتجر
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} className="arabic cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                تسجيل الخروج
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         <div className="flex overflow-x-auto space-x-2 py-2 -mx-3 px-3">
@@ -192,6 +245,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           >
             <ClipboardList size={14} />
             <span className="arabic">الطلبات</span>
+          </NavLink>
+          
+          <NavLink to="/admin/messages"
+            className={({ isActive }) => 
+              `flex items-center gap-1 p-2 rounded-md whitespace-nowrap text-xs ${
+                isActive 
+                  ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
+                  : 'text-sidebar-foreground bg-sidebar-accent/50'
+              }`
+            }
+          >
+            <MessageSquare size={14} />
+            <span className="arabic">الرسائل</span>
           </NavLink>
           
           {user.isSuperAdmin && (
