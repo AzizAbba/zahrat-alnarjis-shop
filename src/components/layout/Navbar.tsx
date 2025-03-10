@@ -1,300 +1,254 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Search, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { useMobile } from '@/hooks/use-mobile';
 
-interface NavbarProps {
-  onSearch?: (query: string) => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
-  const { isAuthenticated, isAdmin, user, logout } = useAuth();
+const Navbar = () => {
+  const { user, logout } = useAuth();
   const { itemCount } = useCart();
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const isMobile = useMobile();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Close mobile menu when screen size changes to desktop
+  useEffect(() => {
+    if (!isMobile && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  }, [isMobile, isMenuOpen]);
+  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSearch && searchQuery.trim()) {
-      onSearch(searchQuery);
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      if (isMenuOpen) setIsMenuOpen(false);
     }
-    // Navigate to products page with search query
-    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
   };
-
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo and brand name */}
+    <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center py-3">
+          {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="mr-2">
               <img 
                 src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
                 alt="زهرة النرجس" 
-                className="h-10 mr-2" 
+                className="h-10" 
               />
-              <span className="text-2xl font-bold text-brand-600 arabic">منظفات زهر النرجس</span>
             </Link>
           </div>
-
+          
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-1 items-center">
-            <Link to="/" className="nav-link">
-              Home
-            </Link>
-            <Link to="/products" className="nav-link">
-              Products
-            </Link>
-            <Link to="/about" className="nav-link">
-              About Us
-            </Link>
-            <Link to="/contact" className="nav-link">
-              Contact
-            </Link>
-            {isAdmin && (
-              <Link to="/admin" className="nav-link">
-                Admin Panel
-              </Link>
-            )}
+          <nav className="hidden md:flex items-center space-x-1">
+            <NavLink to="/" className={({ isActive }) => 
+              `nav-link ${isActive ? 'active' : ''}`
+            }>
+              الرئيسية
+            </NavLink>
+            <NavLink to="/products" className={({ isActive }) => 
+              `nav-link ${isActive ? 'active' : ''}`
+            }>
+              المنتجات
+            </NavLink>
+            <NavLink to="/about" className={({ isActive }) => 
+              `nav-link ${isActive ? 'active' : ''}`
+            }>
+              عن المتجر
+            </NavLink>
+            <NavLink to="/contact" className={({ isActive }) => 
+              `nav-link ${isActive ? 'active' : ''}`
+            }>
+              اتصل بنا
+            </NavLink>
           </nav>
-
-          {/* Search bar - Desktop */}
-          <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
-            <form onSubmit={handleSearch} className="w-full relative">
+          
+          {/* Desktop Search and User Actions */}
+          <div className="hidden md:flex items-center space-x-2">
+            <form onSubmit={handleSearch} className="relative">
               <Input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pr-10"
+                type="search"
+                placeholder="ابحث عن منتج..."
+                className="w-48 pl-8 rtl"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button 
-                type="submit" 
-                variant="ghost" 
-                size="icon"
-                className="absolute right-0 top-0"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             </form>
-          </div>
-
-          {/* User and Cart - Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {isAuthenticated ? (
-                  <>
-                    <DropdownMenuLabel>
-                      <span className="font-medium">{user?.name}</span>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
-                      My Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/orders')}>
-                      My Orders
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout}>
-                      Logout
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem onClick={() => navigate('/login')}>
-                      Login
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/register')}>
-                      Register
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/cart')}
-              className="relative"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-brand-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          {/* Mobile menu toggle */}
-          <div className="md:hidden flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/cart')}
-              className="relative mr-2"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-brand-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </Button>
             
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            
+            {user ? (
+              <div className="flex items-center space-x-2">
+                {user.isAdmin && (
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-xs">
+                    لوحة التحكم
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-xs">
+                  تسجيل الخروج
+                </Button>
+              </div>
+            ) : (
+              <Button variant="ghost" size="icon" onClick={() => navigate('/login')}>
+                <User className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
+          
+          {/* Mobile Menu Toggle */}
+          <div className="flex md:hidden items-center gap-2">
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            <Button variant="ghost" size="icon" onClick={toggleMenu}>
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-3 pb-3">
-            {/* Search bar - Mobile */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pr-10"
-                />
-                <Button 
-                  type="submit" 
-                  variant="ghost" 
-                  size="icon"
-                  className="absolute right-0 top-0"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
+      </div>
+      
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40 bg-white pt-16">
+          <div className="container mx-auto px-4 py-6 space-y-6">
+            <form onSubmit={handleSearch} className="relative mb-6">
+              <Input
+                type="search"
+                placeholder="ابحث عن منتج..."
+                className="w-full pl-8 rtl"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Button type="submit" className="absolute right-1 top-1 h-8" size="sm">
+                بحث
+              </Button>
             </form>
-
-            {/* Navigation links - Mobile */}
-            <div className="flex flex-col space-y-2">
-              <Link 
+            
+            <nav className="flex flex-col space-y-2">
+              <NavLink 
                 to="/" 
-                className="py-2 px-3 rounded hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) => 
+                  `py-3 px-4 rounded-md ${isActive ? 'bg-red-100 text-red-800' : 'hover:bg-gray-100'}`
+                }
+                onClick={() => setIsMenuOpen(false)}
               >
-                Home
-              </Link>
-              <Link 
+                الرئيسية
+              </NavLink>
+              <NavLink 
                 to="/products" 
-                className="py-2 px-3 rounded hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) => 
+                  `py-3 px-4 rounded-md ${isActive ? 'bg-red-100 text-red-800' : 'hover:bg-gray-100'}`
+                }
+                onClick={() => setIsMenuOpen(false)}
               >
-                Products
-              </Link>
-              <Link 
+                المنتجات
+              </NavLink>
+              <NavLink 
                 to="/about" 
-                className="py-2 px-3 rounded hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) => 
+                  `py-3 px-4 rounded-md ${isActive ? 'bg-red-100 text-red-800' : 'hover:bg-gray-100'}`
+                }
+                onClick={() => setIsMenuOpen(false)}
               >
-                About Us
-              </Link>
-              <Link 
+                عن المتجر
+              </NavLink>
+              <NavLink 
                 to="/contact" 
-                className="py-2 px-3 rounded hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) => 
+                  `py-3 px-4 rounded-md ${isActive ? 'bg-red-100 text-red-800' : 'hover:bg-gray-100'}`
+                }
+                onClick={() => setIsMenuOpen(false)}
               >
-                Contact
-              </Link>
-              {isAdmin && (
-                <Link 
-                  to="/admin" 
-                  className="py-2 px-3 rounded hover:bg-gray-100"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Admin Panel
-                </Link>
-              )}
-            </div>
-
-            {/* User account links - Mobile */}
-            <div className="mt-4 pt-4 border-t">
-              {isAuthenticated ? (
-                <>
-                  <div className="px-3 py-2 font-medium">
-                    {user?.name}
-                  </div>
-                  <Link 
-                    to="/profile" 
-                    className="block py-2 px-3 rounded hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
+                اتصل بنا
+              </NavLink>
+            </nav>
+            
+            <div className="border-t border-gray-200 pt-4">
+              {user ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">مرحباً، {user.name}</p>
+                  {user.isAdmin && (
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        navigate('/admin');
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      لوحة التحكم
+                    </Button>
+                  )}
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start text-red-600 border-red-200"
+                    onClick={handleLogout}
                   >
-                    My Profile
-                  </Link>
-                  <Link 
-                    to="/orders" 
-                    className="block py-2 px-3 rounded hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    My Orders
-                  </Link>
-                  <button 
-                    onClick={() => {
-                      logout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2 px-3 rounded hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </>
+                    تسجيل الخروج
+                  </Button>
+                </div>
               ) : (
-                <>
-                  <Link 
-                    to="/login" 
-                    className="block py-2 px-3 rounded hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => {
+                      navigate('/login');
+                      setIsMenuOpen(false);
+                    }}
                   >
-                    Login
-                  </Link>
-                  <Link 
-                    to="/register" 
-                    className="block py-2 px-3 rounded hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
+                    تسجيل الدخول
+                  </Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => {
+                      navigate('/register');
+                      setIsMenuOpen(false);
+                    }}
                   >
-                    Register
-                  </Link>
-                </>
+                    إنشاء حساب
+                  </Button>
+                </div>
               )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
   );
 };
