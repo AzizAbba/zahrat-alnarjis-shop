@@ -63,31 +63,20 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				brand: {
-					50: '#faf4ff',
-					100: '#f3e8ff',
-					200: '#e9d5ff',
-					300: '#d8b4fe',
-					400: '#c084fc',
-					500: '#a855f7',
-					600: '#9333ea',
-					700: '#7e22ce',
-					800: '#6b21a8',
-					900: '#581c87',
-				},
-				// Yellow-gold color scheme that matches narcissus flower - enhanced
+				// Remove the brand (purple) colors
+				// New red color scheme matching the logo
 				narcissus: {
-					50: '#fffdf5',
-					100: '#fffbe0',
-					200: '#fff6b0',
-					300: '#ffee70',
-					400: '#ffdf20',
-					500: '#ffd700', // Narcissus yellow/gold
-					600: '#e6c200',
-					700: '#c49c00',
-					800: '#a67e00',
-					900: '#896800',
-					950: '#4a3700',
+					50: '#fff5f5',
+					100: '#ffe0e0',
+					200: '#ffc7c7',
+					300: '#ffa3a3',
+					400: '#ff7070',
+					500: '#ff4d4d', // Logo red
+					600: '#e53e3e',
+					700: '#c53030',
+					800: '#9b2c2c',
+					900: '#742a2a',
+					950: '#4a1a1a',
 				},
 				// Green color scheme for stems and leaves - enhanced
 				stem: {

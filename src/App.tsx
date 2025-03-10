@@ -22,6 +22,8 @@ import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import MessagesPage from "./pages/admin/MessagesPage";
+import DeliveryManagementPage from "./pages/admin/DeliveryManagementPage";
+import SubcategoryManagementPage from "./pages/admin/SubcategoryManagementPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProductProvider } from "./contexts/ProductContext";
@@ -98,6 +100,22 @@ const App = () => (
                     element={
                       <ProtectedRoute requireAdmin>
                         <MessagesPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/delivery" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <DeliveryManagementPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/subcategories" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <SubcategoryManagementPage />
                       </ProtectedRoute>
                     } 
                   />
