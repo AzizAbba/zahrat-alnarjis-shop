@@ -16,7 +16,6 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   totalPrice: number;
-  // Add missing property used in CheckoutPage
   cart: any[];
 }
 
@@ -24,22 +23,42 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [itemCount, setItemCount] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   
   // Load cart from localStorage on mount
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
-      setItems(JSON.parse(storedCart));
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        setItems(parsedCart);
+      } catch (error) {
+        console.error("Error parsing cart from localStorage:", error);
+        // Reset corrupted cart data
+        localStorage.removeItem('cart');
+      }
     }
   }, []);
   
-  // Save cart to localStorage when it changes
+  // Calculate derived values whenever items change
   useEffect(() => {
+    // Calculate total count of items
+    const count = items.reduce((acc, item) => acc + item.quantity, 0);
+    setItemCount(count);
+    
+    // Calculate total price
+    const price = items.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+    setTotalPrice(price);
+    
+    // Save cart to localStorage
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
   
   // Add a product to the cart
   const addToCart = (product: Product, quantity = 1) => {
+    if (quantity <= 0) return;
+    
     setItems(prevItems => {
       // Check if item already exists in cart
       const existingItem = prevItems.find(item => item.product.id === product.id);
@@ -97,15 +116,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: "All items have been removed from your cart",
     });
   };
-  
-  // Calculate the total number of items in the cart
-  const itemCount = items.reduce((count, item) => count + item.quantity, 0);
-  
-  // Calculate the total price of all items in the cart
-  const totalPrice = items.reduce(
-    (total, item) => total + (item.product.price * item.quantity), 
-    0
-  );
   
   // Convert items to the format expected by the CheckoutPage
   const cart = items.map(item => ({

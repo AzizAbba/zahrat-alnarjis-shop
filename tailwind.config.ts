@@ -63,22 +63,39 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Remove the brand (purple) colors
-				// New red color scheme matching the logo
+				// Logo red color scheme
+				logo: {
+					red: '#ea384c',
+					yellow: '#FEF7CD',
+					orange: '#FEC6A1',
+				},
 				narcissus: {
 					50: '#fff5f5',
 					100: '#ffe0e0',
 					200: '#ffc7c7',
 					300: '#ffa3a3',
 					400: '#ff7070',
-					500: '#ff4d4d', // Logo red
-					600: '#e53e3e',
-					700: '#c53030',
+					500: '#ea384c', // Updated to match logo red
+					600: '#d13344',
+					700: '#b82d3b',
 					800: '#9b2c2c',
 					900: '#742a2a',
 					950: '#4a1a1a',
 				},
-				// Green color scheme for stems and leaves - enhanced
+				// Yellow color scheme for accents
+				sunshine: {
+					50: '#fffef7',
+					100: '#fffde8',
+					200: '#fef9c4',
+					300: '#FEF7CD', // Logo soft yellow
+					400: '#fef0a1',
+					500: '#fde573',
+					600: '#fcc434',
+					700: '#e6a512',
+					800: '#a45f12',
+					900: '#7a4510',
+					950: '#462505',
+				},
 				stem: {
 					50: '#f0fdf4',
 					100: '#dcfce7',
@@ -130,6 +147,14 @@ export default {
 				scaleIn: {
 					'0%': { transform: 'scale(0.95)', opacity: '0' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				fadeInUp: {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				pulse: {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
@@ -138,7 +163,9 @@ export default {
 				fadeIn: 'fadeIn 0.5s ease-in-out',
 				slideInRight: 'slideInRight 0.3s ease-out',
 				slideInLeft: 'slideInLeft 0.3s ease-out',
-				scaleIn: 'scaleIn 0.2s ease-out'
+				scaleIn: 'scaleIn 0.2s ease-out',
+				fadeInUp: 'fadeInUp 0.3s ease-out',
+				pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
 			}
 		}
 	},

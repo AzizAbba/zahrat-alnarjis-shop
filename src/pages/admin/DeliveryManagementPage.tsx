@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useProducts } from '@/contexts/ProductContext';
 import { DeliveryOption, DeliveryZone } from '@/types/product';
-import { MapPin, Truck, Package, Plus, Pencil, Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { MapPin, Truck, Package, Plus, Pencil, Trash2, CheckCircle2, XCircle, Home, ArrowLeft } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -28,8 +28,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const DeliveryManagementPage = () => {
+  const navigate = useNavigate();
   const { 
     deliveryOptions, 
     addDeliveryOption, 
@@ -50,7 +52,9 @@ const DeliveryManagementPage = () => {
     price: 0,
     estimatedDays: '',
     isActive: true,
-    icon: 'truck'
+    icon: 'truck',
+    description: '',
+    arabicDescription: ''
   });
   
   // State for delivery zones dialog
@@ -61,7 +65,9 @@ const DeliveryManagementPage = () => {
     arabicName: '',
     cities: '',
     additionalFee: 0,
-    isActive: true
+    isActive: true,
+    description: '',
+    arabicDescription: ''
   });
   
   // State for delete confirmation
@@ -79,7 +85,9 @@ const DeliveryManagementPage = () => {
         price: option.price,
         estimatedDays: option.estimatedDays,
         isActive: option.isActive,
-        icon: option.icon || 'truck'
+        icon: option.icon || 'truck',
+        description: option.description || '',
+        arabicDescription: option.arabicDescription || ''
       });
     } else {
       setSelectedOption(null);
@@ -89,7 +97,9 @@ const DeliveryManagementPage = () => {
         price: 0,
         estimatedDays: '',
         isActive: true,
-        icon: 'truck'
+        icon: 'truck',
+        description: '',
+        arabicDescription: ''
       });
     }
     setIsOptionDialogOpen(true);
@@ -104,7 +114,9 @@ const DeliveryManagementPage = () => {
         arabicName: zone.arabicName || '',
         cities: zone.cities.join(', '),
         additionalFee: zone.additionalFee,
-        isActive: zone.isActive
+        isActive: zone.isActive,
+        description: zone.description || '',
+        arabicDescription: zone.arabicDescription || ''
       });
     } else {
       setSelectedZone(null);
@@ -113,7 +125,9 @@ const DeliveryManagementPage = () => {
         arabicName: '',
         cities: '',
         additionalFee: 0,
-        isActive: true
+        isActive: true,
+        description: '',
+        arabicDescription: ''
       });
     }
     setIsZoneDialogOpen(true);
@@ -135,7 +149,9 @@ const DeliveryManagementPage = () => {
         price: optionForm.price,
         estimatedDays: optionForm.estimatedDays,
         isActive: optionForm.isActive,
-        icon: optionForm.icon
+        icon: optionForm.icon,
+        description: optionForm.description,
+        arabicDescription: optionForm.arabicDescription
       };
       
       if (selectedOption) {
@@ -167,7 +183,9 @@ const DeliveryManagementPage = () => {
         arabicName: zoneForm.arabicName,
         cities: zoneForm.cities.split(',').map(city => city.trim()),
         additionalFee: zoneForm.additionalFee,
-        isActive: zoneForm.isActive
+        isActive: zoneForm.isActive,
+        description: zoneForm.description,
+        arabicDescription: zoneForm.arabicDescription
       };
       
       if (selectedZone) {
@@ -222,15 +240,26 @@ const DeliveryManagementPage = () => {
   
   return (
     <AdminLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold arabic">إدارة التوصيل</h1>
-        <p className="text-muted-foreground arabic mt-1">
-          إدارة خيارات ومناطق التوصيل المتاحة للعملاء
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold arabic">إدارة التوصيل</h1>
+          <p className="text-muted-foreground arabic mt-1">
+            إدارة خيارات ومناطق التوصيل المتاحة للعملاء
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2"
+        >
+          <Home className="h-4 w-4" />
+          <span>Return to Homepage</span>
+        </Button>
       </div>
       
       <Tabs defaultValue="options" className="space-y-6">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 bg-card">
           <TabsTrigger value="options" className="arabic">خيارات التوصيل</TabsTrigger>
           <TabsTrigger value="zones" className="arabic">مناطق التوصيل</TabsTrigger>
         </TabsList>
@@ -239,7 +268,10 @@ const DeliveryManagementPage = () => {
         <TabsContent value="options">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold arabic">خيارات التوصيل</h2>
-            <Button onClick={() => handleOpenOptionDialog()} className="flex items-center gap-2">
+            <Button 
+              onClick={() => handleOpenOptionDialog()} 
+              className="flex items-center gap-2 bg-narcissus-500 hover:bg-narcissus-600"
+            >
               <Plus className="h-4 w-4" />
               <span className="arabic">إضافة خيار جديد</span>
             </Button>
@@ -247,7 +279,7 @@ const DeliveryManagementPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {deliveryOptions.map(option => (
-              <Card key={option.id} className="border border-border">
+              <Card key={option.id} className="border border-border hover:border-narcissus-200 transition-all duration-200">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center">
@@ -271,11 +303,18 @@ const DeliveryManagementPage = () => {
                       <span className="text-muted-foreground arabic">مدة التوصيل:</span>
                       <span className="font-medium arabic">{option.estimatedDays} يوم</span>
                     </div>
+                    {option.description && (
+                      <p className="text-xs text-muted-foreground mt-2">{option.description}</p>
+                    )}
+                    {option.arabicDescription && (
+                      <p className="text-xs text-muted-foreground mt-1 arabic">{option.arabicDescription}</p>
+                    )}
                     <div className="flex justify-end gap-2 mt-4">
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         onClick={() => handleOpenOptionDialog(option)}
+                        className="hover:bg-narcissus-50 hover:text-narcissus-500"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -283,6 +322,7 @@ const DeliveryManagementPage = () => {
                         variant="ghost" 
                         size="sm"
                         onClick={() => handleOpenDeleteDialog('option', option.id)}
+                        className="hover:bg-red-50 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -307,13 +347,16 @@ const DeliveryManagementPage = () => {
         <TabsContent value="zones">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold arabic">مناطق التوصيل</h2>
-            <Button onClick={() => handleOpenZoneDialog()} className="flex items-center gap-2">
+            <Button 
+              onClick={() => handleOpenZoneDialog()} 
+              className="flex items-center gap-2 bg-narcissus-500 hover:bg-narcissus-600"
+            >
               <Plus className="h-4 w-4" />
               <span className="arabic">إضافة منطقة جديدة</span>
             </Button>
           </div>
           
-          <div className="bg-card rounded-lg shadow-sm border">
+          <div className="bg-card rounded-lg shadow-sm border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -327,7 +370,7 @@ const DeliveryManagementPage = () => {
                 </thead>
                 <tbody>
                   {deliveryZones.map(zone => (
-                    <tr key={zone.id} className="border-b">
+                    <tr key={zone.id} className="border-b hover:bg-muted/20">
                       <td className="p-3 arabic">{zone.arabicName}</td>
                       <td className="p-3">
                         <div className="flex flex-wrap gap-1 max-w-[250px]">
@@ -348,6 +391,7 @@ const DeliveryManagementPage = () => {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => handleOpenZoneDialog(zone)}
+                            className="hover:bg-narcissus-50 hover:text-narcissus-500"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -355,6 +399,7 @@ const DeliveryManagementPage = () => {
                             variant="ghost" 
                             size="sm"
                             onClick={() => handleOpenDeleteDialog('zone', zone.id)}
+                            className="hover:bg-red-50 hover:text-red-500"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -376,6 +421,59 @@ const DeliveryManagementPage = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+          
+          {/* Mobile view for zones */}
+          <div className="block md:hidden mt-4 space-y-4">
+            {deliveryZones.map(zone => (
+              <Card key={zone.id} className="border border-border">
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg arabic">{zone.arabicName}</CardTitle>
+                    {getStatusBadge(zone.isActive)}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {zone.cities.map((city, index) => (
+                        <span key={index} className="bg-muted px-2 py-0.5 rounded-full text-xs arabic">
+                          {city}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground arabic">الرسوم الإضافية:</span>
+                      <span className="font-medium ltr">{zone.additionalFee} ريال</span>
+                    </div>
+                    {zone.description && (
+                      <p className="text-xs text-muted-foreground mt-2">{zone.description}</p>
+                    )}
+                    {zone.arabicDescription && (
+                      <p className="text-xs text-muted-foreground mt-1 arabic">{zone.arabicDescription}</p>
+                    )}
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleOpenZoneDialog(zone)}
+                        className="hover:bg-narcissus-50 hover:text-narcissus-500"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleOpenDeleteDialog('zone', zone.id)}
+                        className="hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </TabsContent>
       </Tabs>
@@ -437,6 +535,27 @@ const DeliveryManagementPage = () => {
             </div>
             
             <div className="space-y-2">
+              <Label htmlFor="description" className="ltr">English Description</Label>
+              <Input
+                id="description"
+                value={optionForm.description}
+                onChange={(e) => setOptionForm({...optionForm, description: e.target.value})}
+                placeholder="Option description"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="arabicDescription" className="arabic">الوصف بالعربية</Label>
+              <Input
+                id="arabicDescription"
+                value={optionForm.arabicDescription}
+                onChange={(e) => setOptionForm({...optionForm, arabicDescription: e.target.value})}
+                placeholder="وصف الخيار"
+                dir="rtl"
+              />
+            </div>
+            
+            <div className="space-y-2">
               <Label htmlFor="icon" className="arabic">الأيقونة</Label>
               <div className="flex gap-2">
                 <Button
@@ -483,7 +602,11 @@ const DeliveryManagementPage = () => {
             <Button type="button" variant="outline" onClick={() => setIsOptionDialogOpen(false)}>
               إلغاء
             </Button>
-            <Button type="button" onClick={handleOptionSubmit}>
+            <Button 
+              type="button" 
+              onClick={handleOptionSubmit}
+              className="bg-narcissus-500 hover:bg-narcissus-600"
+            >
               {selectedOption ? 'تحديث' : 'إضافة'}
             </Button>
           </DialogFooter>
@@ -546,6 +669,27 @@ const DeliveryManagementPage = () => {
               />
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="zoneDescription" className="ltr">English Description</Label>
+              <Input
+                id="zoneDescription"
+                value={zoneForm.description}
+                onChange={(e) => setZoneForm({...zoneForm, description: e.target.value})}
+                placeholder="Zone description"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="zoneArabicDescription" className="arabic">الوصف بالعربية</Label>
+              <Input
+                id="zoneArabicDescription"
+                value={zoneForm.arabicDescription}
+                onChange={(e) => setZoneForm({...zoneForm, arabicDescription: e.target.value})}
+                placeholder="وصف المنطقة"
+                dir="rtl"
+              />
+            </div>
+            
             <div className="flex items-center justify-between">
               <Label htmlFor="zoneIsActive" className="arabic">نشط</Label>
               <Switch
@@ -560,7 +704,11 @@ const DeliveryManagementPage = () => {
             <Button type="button" variant="outline" onClick={() => setIsZoneDialogOpen(false)}>
               إلغاء
             </Button>
-            <Button type="button" onClick={handleZoneSubmit}>
+            <Button 
+              type="button" 
+              onClick={handleZoneSubmit}
+              className="bg-narcissus-500 hover:bg-narcissus-600"
+            >
               {selectedZone ? 'تحديث' : 'إضافة'}
             </Button>
           </DialogFooter>
