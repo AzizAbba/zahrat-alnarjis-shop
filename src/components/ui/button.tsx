@@ -21,7 +21,7 @@ const buttonVariants = cva(
         link: "text-red-600 underline-offset-4 hover:underline",
         accent: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200 border border-yellow-300", 
         admin: "bg-red-600 text-white hover:bg-red-700 border border-red-700",
-        yellow: "bg-yellow-300 text-red-800 hover:bg-yellow-400", // New yellow variant
+        yellow: "bg-yellow-300 text-red-800 hover:bg-yellow-400 border border-yellow-200", // Updated yellow variant
       },
       size: {
         default: "h-10 px-4 py-2",

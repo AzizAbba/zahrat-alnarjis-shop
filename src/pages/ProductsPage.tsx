@@ -20,14 +20,15 @@ const ProductsPage: React.FC = () => {
   const searchParam = searchParams.get('search');
   const minPriceParam = searchParams.get('minPrice');
   const maxPriceParam = searchParams.get('maxPrice');
+  const sortParam = searchParams.get('sort') || 'default';
   
   // Filter states
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryParam);
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
   
   // Find min and max prices in products
-  const minPrice = Math.floor(Math.min(...products.map(p => p.price)));
-  const maxPrice = Math.ceil(Math.max(...products.map(p => p.price)));
+  const minPrice = products.length ? Math.floor(Math.min(...products.map(p => p.price))) : 0;
+  const maxPrice = products.length ? Math.ceil(Math.max(...products.map(p => p.price))) : 100;
   
   // Price filter state
   const [priceRange, setPriceRange] = useState<[number, number]>([
@@ -55,8 +56,12 @@ const ProductsPage: React.FC = () => {
       params.set('maxPrice', priceRange[1].toString());
     }
     
+    if (sortParam !== 'default') {
+      params.set('sort', sortParam);
+    }
+    
     navigate({ search: params.toString() }, { replace: true });
-  }, [selectedCategory, searchQuery, priceRange, navigate, minPrice, maxPrice]);
+  }, [selectedCategory, searchQuery, priceRange, navigate, minPrice, maxPrice, sortParam]);
   
   // Filter products based on all criteria
   const filteredProducts = products.filter(product => {
@@ -79,6 +84,22 @@ const ProductsPage: React.FC = () => {
     return true;
   });
   
+  // Sort products based on the sortParam
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortParam) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'name-asc':
+        return a.name.localeCompare(b.name);
+      case 'name-desc':
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
+  
   // Handle category selection
   const handleCategorySelect = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
@@ -95,13 +116,13 @@ const ProductsPage: React.FC = () => {
   };
   
   return (
-    <MainLayout>
+    <MainLayout onSearch={handleSearch}>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8 text-red-600">منتجاتنا</h1>
         
-        <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+        <div className="flex flex-col lg:flex-row lg:gap-8">
           {/* Sidebar with filters */}
-          <div className="lg:col-span-1 mb-6 lg:mb-0">
+          <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
             <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
             
             <CategoryFilter 
@@ -118,17 +139,17 @@ const ProductsPage: React.FC = () => {
           </div>
           
           {/* Product grid */}
-          <div className="lg:col-span-3">
+          <div className="w-full lg:w-3/4">
             <div className="mb-6 flex justify-between items-center">
               <p className="text-gray-600">
-                عرض {filteredProducts.length} منتج{filteredProducts.length !== 1 ? 'ات' : ''}
+                عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
               </p>
               
-              <SortOptions products={filteredProducts} />
+              <SortOptions sortParam={sortParam} />
             </div>
             
             <ProductGrid 
-              products={filteredProducts} 
+              products={sortedProducts} 
               emptyMessage="لا توجد منتجات تطابق معايير البحث المحددة. حاول تعديل معايير البحث."
             />
           </div>
@@ -139,11 +160,9 @@ const ProductsPage: React.FC = () => {
 };
 
 // Helper component for sort options
-const SortOptions: React.FC<{ products: Product[] }> = ({ products }) => {
+const SortOptions: React.FC<{ sortParam: string }> = ({ sortParam }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const sort = searchParams.get('sort') || 'default';
   
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -160,9 +179,9 @@ const SortOptions: React.FC<{ products: Product[] }> = ({ products }) => {
   
   return (
     <div className="flex items-center">
-      <span className="text-gray-600 mr-2">ترتيب حسب:</span>
+      <span className="text-gray-600 ml-2">ترتيب حسب:</span>
       <select 
-        value={sort}
+        value={sortParam}
         onChange={handleSortChange}
         className="border rounded-md px-3 py-1.5 bg-white text-gray-800"
       >

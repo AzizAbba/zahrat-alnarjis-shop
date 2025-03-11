@@ -21,16 +21,16 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onSearch, initialQuery = 
     <form onSubmit={handleSubmit} className="relative mb-6">
       <Input
         type="text"
-        placeholder="Search products..."
+        placeholder="ابحث عن المنتجات..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full pr-10"
+        className="w-full pr-10 text-right"
       />
       <Button 
         type="submit" 
         variant="ghost" 
         size="icon"
-        className="absolute right-0 top-0"
+        className="absolute left-0 top-0"
       >
         <Search className="h-4 w-4" />
       </Button>
