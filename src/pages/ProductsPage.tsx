@@ -95,9 +95,9 @@ const ProductsPage: React.FC = () => {
   };
   
   return (
-    <MainLayout onSearch={handleSearch}>
+    <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Our Products</h1>
+        <h1 className="text-3xl font-bold mb-8 text-red-600">منتجاتنا</h1>
         
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Sidebar with filters */}
@@ -121,7 +121,7 @@ const ProductsPage: React.FC = () => {
           <div className="lg:col-span-3">
             <div className="mb-6 flex justify-between items-center">
               <p className="text-gray-600">
-                Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+                عرض {filteredProducts.length} منتج{filteredProducts.length !== 1 ? 'ات' : ''}
               </p>
               
               <SortOptions products={filteredProducts} />
@@ -129,7 +129,7 @@ const ProductsPage: React.FC = () => {
             
             <ProductGrid 
               products={filteredProducts} 
-              emptyMessage="No products match your filters. Try adjusting your search criteria."
+              emptyMessage="لا توجد منتجات تطابق معايير البحث المحددة. حاول تعديل معايير البحث."
             />
           </div>
         </div>
@@ -160,17 +160,17 @@ const SortOptions: React.FC<{ products: Product[] }> = ({ products }) => {
   
   return (
     <div className="flex items-center">
-      <span className="text-gray-600 mr-2">Sort by:</span>
+      <span className="text-gray-600 mr-2">ترتيب حسب:</span>
       <select 
         value={sort}
         onChange={handleSortChange}
         className="border rounded-md px-3 py-1.5 bg-white text-gray-800"
       >
-        <option value="default">Default</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="name-asc">Name: A to Z</option>
-        <option value="name-desc">Name: Z to A</option>
+        <option value="default">الافتراضي</option>
+        <option value="price-low">السعر: من الأقل إلى الأعلى</option>
+        <option value="price-high">السعر: من الأعلى إلى الأقل</option>
+        <option value="name-asc">الاسم: أ-ي</option>
+        <option value="name-desc">الاسم: ي-أ</option>
       </select>
     </div>
   );

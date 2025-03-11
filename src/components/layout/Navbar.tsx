@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,11 @@ import { useCart } from '@/contexts/CartContext';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const Navbar = () => {
+interface NavbarProps {
+  onSearch?: (query: string) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,7 +29,14 @@ const Navbar = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      if (onSearch) {
+        // If onSearch prop is provided, use it
+        onSearch(searchTerm.trim());
+      } else {
+        // Otherwise, navigate to products page with search parameter
+        navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      }
+      
       if (isMenuOpen) setIsMenuOpen(false);
     }
   };
@@ -59,22 +69,22 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             <NavLink to="/" className={({ isActive }) => 
-              `nav-link ${isActive ? 'active' : ''}`
+              `nav-link ${isActive ? 'active font-bold text-red-600' : 'hover:text-red-600'}`
             }>
               الرئيسية
             </NavLink>
             <NavLink to="/products" className={({ isActive }) => 
-              `nav-link ${isActive ? 'active' : ''}`
+              `nav-link ${isActive ? 'active font-bold text-red-600' : 'hover:text-red-600'}`
             }>
               المنتجات
             </NavLink>
             <NavLink to="/about" className={({ isActive }) => 
-              `nav-link ${isActive ? 'active' : ''}`
+              `nav-link ${isActive ? 'active font-bold text-red-600' : 'hover:text-red-600'}`
             }>
               عن المتجر
             </NavLink>
             <NavLink to="/contact" className={({ isActive }) => 
-              `nav-link ${isActive ? 'active' : ''}`
+              `nav-link ${isActive ? 'active font-bold text-red-600' : 'hover:text-red-600'}`
             }>
               اتصل بنا
             </NavLink>
@@ -154,7 +164,7 @@ const Navbar = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Button type="submit" className="absolute right-1 top-1 h-8" size="sm">
+              <Button type="submit" className="absolute right-1 top-1 h-8 bg-red-600 hover:bg-red-700" size="sm">
                 بحث
               </Button>
             </form>
@@ -235,7 +245,7 @@ const Navbar = () => {
                     تسجيل الدخول
                   </Button>
                   <Button 
-                    className="w-full"
+                    className="w-full bg-red-600 hover:bg-red-700"
                     onClick={() => {
                       navigate('/register');
                       setIsMenuOpen(false);

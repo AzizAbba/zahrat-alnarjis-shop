@@ -69,6 +69,7 @@ export interface DeliveryOption {
   arabicName?: string;
   price: number;
   description?: string;
+  arabicDescription?: string;
   estimatedDays?: string;
   isActive: boolean;
   icon?: string;
@@ -79,6 +80,8 @@ export interface DeliveryZone {
   name: string;
   arabicName?: string;
   cities: string[];
+  description?: string;
+  arabicDescription?: string;
   additionalFee: number;
   isActive: boolean;
 }
