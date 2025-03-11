@@ -6,9 +6,10 @@ import Footer from './Footer';
 interface MainLayoutProps {
   children: React.ReactNode;
   onSearch?: (query: string) => void;
+  pageName?: string;
 }
 
-interface PageContent {
+export interface PageContent {
   id: string;
   page: string;
   section: string;
@@ -17,7 +18,7 @@ interface PageContent {
   imageUrl?: string;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName }) => {
   const [siteContent, setSiteContent] = useState<PageContent[]>([]);
 
   useEffect(() => {
@@ -29,6 +30,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch }) => {
 
   const getContentForPage = (page: string, section: string) => {
     return siteContent.find(content => content.page === page && content.section === section);
+  };
+
+  // Make getContentForPage available to child components through context
+  const contentContextValue = {
+    siteContent,
+    getContentForPage
   };
 
   return (
@@ -43,3 +50,4 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch }) => {
 };
 
 export default MainLayout;
+export { type PageContent };

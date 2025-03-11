@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -123,7 +124,7 @@ function App() {
                     <Route 
                       path="/admin/site-content" 
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requireAdmin>
                           <SiteContentPage />
                         </ProtectedRoute>
                       } 
