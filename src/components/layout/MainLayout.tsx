@@ -22,6 +22,7 @@ export interface PageContent {
 interface ContentContextType {
   siteContent: PageContent[];
   getContentForPage: (page: string, section: string) => PageContent | undefined;
+  updatePageContent: (content: PageContent) => void;
 }
 
 export const ContentContext = createContext<ContentContextType | null>(null);
@@ -49,10 +50,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
     return siteContent.find(content => content.page === page && content.section === section);
   };
 
-  // Make getContentForPage available to child components through context
+  const updatePageContent = (updatedContent: PageContent) => {
+    const newContent = siteContent.map(item => 
+      item.id === updatedContent.id ? updatedContent : item
+    );
+    setSiteContent(newContent);
+    localStorage.setItem('siteContent', JSON.stringify(newContent));
+  };
+
+  // Make content functions available to child components through context
   const contentContextValue = {
     siteContent,
-    getContentForPage
+    getContentForPage,
+    updatePageContent
   };
 
   return (
@@ -69,4 +79,3 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
 };
 
 export default MainLayout;
-// Remove the duplicate export here

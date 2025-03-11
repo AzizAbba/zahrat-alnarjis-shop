@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/components/ui/use-toast';
 import { toast as sonnerToast } from 'sonner';
 import { Product } from '@/types/product';
+import { ImageUploader } from '@/components/common/FileUploader';
 
 const AdminProductsPage = () => {
   const { products, categories, subcategories, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -322,6 +323,21 @@ const AdminProductsPage = () => {
           
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
+              {/* Image uploader */}
+              <div className="space-y-2">
+                <Label className="arabic">صورة المنتج</Label>
+                <div className="flex flex-col items-center">
+                  <ImageUploader 
+                    imageUrl={formData.imageUrl}
+                    onImageUploaded={(url) => setFormData({...formData, imageUrl: url})}
+                    className="w-40 h-40 mx-auto"
+                  />
+                  <p className="text-xs text-center text-muted-foreground mt-2 arabic">
+                    انقر على الصورة لتحميل صورة جديدة
+                  </p>
+                </div>
+              </div>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="ltr">English Name</Label>

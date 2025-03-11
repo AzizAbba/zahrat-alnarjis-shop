@@ -7,12 +7,16 @@ import CategoryFilter from '@/components/products/CategoryFilter';
 import PriceFilter from '@/components/products/PriceFilter';
 import ProductSearch from '@/components/products/ProductSearch';
 import { useProducts } from '@/contexts/ProductContext';
-import { Product } from '@/types/product';
+import { useContent } from '@/components/layout/MainLayout';
 
 const ProductsPage: React.FC = () => {
   const { products } = useProducts();
+  const { getContentForPage } = useContent();
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Get page content
+  const headerContent = getContentForPage('products', 'header');
   
   // Get search params
   const searchParams = new URLSearchParams(location.search);
@@ -118,34 +122,44 @@ const ProductsPage: React.FC = () => {
   return (
     <MainLayout onSearch={handleSearch}>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-red-600">منتجاتنا</h1>
+        <h1 className="text-3xl font-bold mb-8 text-red-600">
+          {headerContent?.title || 'منتجاتنا'}
+        </h1>
         
         <div className="flex flex-col lg:flex-row lg:gap-8">
           {/* Sidebar with filters */}
-          <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
-            <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
-            
-            <CategoryFilter 
-              selectedCategory={selectedCategory} 
-              onSelectCategory={handleCategorySelect} 
-            />
-            
-            <PriceFilter 
-              minPrice={minPrice} 
-              maxPrice={maxPrice} 
-              priceRange={priceRange} 
-              onPriceChange={handlePriceChange} 
-            />
+          <div className="w-full lg:w-1/4 mb-6 lg:mb-0 sticky top-20 self-start">
+            <div className="bg-white p-4 rounded-lg shadow-sm border">
+              <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+              
+              <div className="mt-6">
+                <CategoryFilter 
+                  selectedCategory={selectedCategory} 
+                  onSelectCategory={handleCategorySelect} 
+                />
+              </div>
+              
+              <div className="mt-6">
+                <PriceFilter 
+                  minPrice={minPrice} 
+                  maxPrice={maxPrice} 
+                  priceRange={priceRange} 
+                  onPriceChange={handlePriceChange} 
+                />
+              </div>
+            </div>
           </div>
           
           {/* Product grid */}
           <div className="w-full lg:w-3/4">
-            <div className="mb-6 flex justify-between items-center">
-              <p className="text-gray-600">
-                عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
-              </p>
-              
-              <SortOptions sortParam={sortParam} />
+            <div className="bg-white p-4 rounded-lg shadow-sm border mb-6">
+              <div className="flex justify-between items-center">
+                <p className="text-gray-600">
+                  عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
+                </p>
+                
+                <SortOptions sortParam={sortParam} />
+              </div>
             </div>
             
             <ProductGrid 
