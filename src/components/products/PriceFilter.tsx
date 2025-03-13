@@ -19,7 +19,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
     <div className="bg-white rounded-lg shadow-sm p-4 border border-yellow-200">
       <h2 className="text-lg font-semibold mb-4 text-right arabic">نطاق السعر</h2>
       
-      <div className="mb-4">
+      <div className="mb-5">
         <Slider
           defaultValue={priceRange}
           value={priceRange}

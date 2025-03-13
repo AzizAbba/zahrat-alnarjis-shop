@@ -171,23 +171,27 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
         {headerContent?.title || 'منتجاتنا'}
       </h1>
       
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
-          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20 space-y-4">
+          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20 space-y-5">
             <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
             
-            <CategoryFilter 
-              selectedCategory={selectedCategory} 
-              onSelectCategory={handleCategorySelect} 
-            />
+            <div className="mb-1">
+              <CategoryFilter 
+                selectedCategory={selectedCategory} 
+                onSelectCategory={handleCategorySelect} 
+              />
+            </div>
             
-            <PriceFilter 
-              minPrice={minPrice} 
-              maxPrice={maxPrice} 
-              priceRange={priceRange} 
-              onPriceChange={handlePriceChange} 
-            />
+            <div className="mt-1">
+              <PriceFilter 
+                minPrice={minPrice} 
+                maxPrice={maxPrice} 
+                priceRange={priceRange} 
+                onPriceChange={handlePriceChange} 
+              />
+            </div>
           </div>
         </div>
         
