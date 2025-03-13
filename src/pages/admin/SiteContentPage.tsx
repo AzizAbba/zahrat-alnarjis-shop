@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,7 +30,19 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const SiteContentPage = () => {
-  const { siteContent, updatePageContent, addPageContent } = React.useContext(ContentContext)!;
+  const contentContext = useContext(ContentContext);
+  
+  if (!contentContext) {
+    return (
+      <AdminLayout>
+        <div className="p-8 text-center">
+          <p className="text-red-500 font-bold arabic">خطأ في تحميل البيانات</p>
+        </div>
+      </AdminLayout>
+    );
+  }
+  
+  const { siteContent, updatePageContent, addPageContent } = contentContext;
   const [currentTab, setCurrentTab] = useState('home');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -47,7 +58,6 @@ const SiteContentPage = () => {
     imageUrl: ''
   });
   
-  // Filter content by page
   const getPageContent = (page: string) => {
     return siteContent.filter(content => content.page === page);
   };
@@ -73,13 +83,9 @@ const SiteContentPage = () => {
   const confirmDelete = () => {
     if (!selectedContent) return;
     
-    // Filter out the selected content
     const newContent = siteContent.filter(item => item.id !== selectedContent.id);
     localStorage.setItem('siteContent', JSON.stringify(newContent));
-    
-    // Reload the page to refresh the context
     window.location.reload();
-    
     toast.success('تم حذف المحتوى بنجاح');
     setIsDeleteDialogOpen(false);
   };
@@ -136,7 +142,7 @@ const SiteContentPage = () => {
           <p className="text-muted-foreground mb-4">لا يوجد محتوى لهذه الصفحة</p>
           <Button variant="outline" onClick={handleAddNew}>
             <Plus className="mr-2 h-4 w-4" />
-            إضافة محتوى جديد
+            <span className="arabic">إضافة محتوى جديد</span>
           </Button>
         </div>
       );
@@ -189,7 +195,7 @@ const SiteContentPage = () => {
         <h1 className="text-2xl font-bold arabic">إدارة محتوى الموقع</h1>
         <Button onClick={handleAddNew}>
           <Plus className="mr-2 h-4 w-4" />
-          إضافة محتوى جديد
+          <span className="arabic">إضافة محتوى جديد</span>
         </Button>
       </div>
       
@@ -223,7 +229,6 @@ const SiteContentPage = () => {
         </TabsContent>
       </Tabs>
       
-      {/* Edit Content Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
@@ -298,7 +303,6 @@ const SiteContentPage = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Add New Content Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
@@ -378,7 +382,6 @@ const SiteContentPage = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

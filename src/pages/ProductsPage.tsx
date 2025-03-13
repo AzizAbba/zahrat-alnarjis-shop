@@ -171,7 +171,7 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
         {headerContent?.title || 'منتجاتنا'}
       </h1>
       
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-0">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
           <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20">
@@ -196,10 +196,10 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
         </div>
         
         {/* Product grid */}
-        <div className="w-full lg:w-3/4">
+        <div className="w-full lg:w-3/4 lg:pl-6">
           <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
             <div className="flex justify-between items-center">
-              <p className="text-gray-600">
+              <p className="text-gray-600 arabic">
                 عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
               </p>
               

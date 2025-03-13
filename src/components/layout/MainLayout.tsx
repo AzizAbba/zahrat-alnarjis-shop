@@ -105,7 +105,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
   };
 
   // Make content functions available to child components through context
-  const contentContextValue = {
+  const contentContextValue: ContentContextType = {
     siteContent,
     getContentForPage,
     updatePageContent,
