@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+
+import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ContentContext, PageContent } from '@/components/layout/MainLayout';
+import { ContentContext, PageContent, useContent } from '@/components/layout/MainLayout';
 import { ImageUploader } from '@/components/common/FileUploader';
 import { Edit, Plus, Save, Trash2 } from 'lucide-react';
 import {
@@ -30,19 +31,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const SiteContentPage = () => {
-  const contentContext = useContext(ContentContext);
-  
-  if (!contentContext) {
-    return (
-      <AdminLayout>
-        <div className="p-8 text-center">
-          <p className="text-red-500 font-bold arabic">خطأ في تحميل البيانات</p>
-        </div>
-      </AdminLayout>
-    );
-  }
-  
-  const { siteContent, updatePageContent, addPageContent } = contentContext;
+  // Use the custom hook to access content
+  const { siteContent, updatePageContent, addPageContent } = useContent();
   const [currentTab, setCurrentTab] = useState('home');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

@@ -171,32 +171,28 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
         {headerContent?.title || 'منتجاتنا'}
       </h1>
       
-      <div className="flex flex-col lg:flex-row gap-0">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
-          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20">
+          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20 space-y-4">
             <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
             
-            <div className="mt-4">
-              <CategoryFilter 
-                selectedCategory={selectedCategory} 
-                onSelectCategory={handleCategorySelect} 
-              />
-            </div>
+            <CategoryFilter 
+              selectedCategory={selectedCategory} 
+              onSelectCategory={handleCategorySelect} 
+            />
             
-            <div className="mt-4">
-              <PriceFilter 
-                minPrice={minPrice} 
-                maxPrice={maxPrice} 
-                priceRange={priceRange} 
-                onPriceChange={handlePriceChange} 
-              />
-            </div>
+            <PriceFilter 
+              minPrice={minPrice} 
+              maxPrice={maxPrice} 
+              priceRange={priceRange} 
+              onPriceChange={handlePriceChange} 
+            />
           </div>
         </div>
         
         {/* Product grid */}
-        <div className="w-full lg:w-3/4 lg:pl-6">
+        <div className="w-full lg:w-3/4">
           <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
             <div className="flex justify-between items-center">
               <p className="text-gray-600 arabic">

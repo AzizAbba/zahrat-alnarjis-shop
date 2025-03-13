@@ -26,7 +26,12 @@ interface ContentContextType {
   addPageContent: (content: PageContent) => void;
 }
 
-export const ContentContext = createContext<ContentContextType | null>(null);
+export const ContentContext = createContext<ContentContextType>({
+  siteContent: [],
+  getContentForPage: () => undefined,
+  updatePageContent: () => {},
+  addPageContent: () => {}
+});
 
 // Custom hook to use the content context
 export const useContent = () => {
