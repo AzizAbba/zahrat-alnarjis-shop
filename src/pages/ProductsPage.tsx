@@ -126,20 +126,20 @@ const ProductsPage: React.FC = () => {
           {headerContent?.title || 'منتجاتنا'}
         </h1>
         
-        <div className="flex flex-col lg:flex-row lg:gap-8">
+        <div className="flex flex-col lg:flex-row">
           {/* Sidebar with filters */}
-          <div className="w-full lg:w-1/4 mb-6 lg:mb-0 sticky top-20 self-start">
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="w-full lg:w-1/4 mb-6 lg:mb-0 lg:pr-4">
+            <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20">
               <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
               
-              <div className="mt-6">
+              <div className="mt-4">
                 <CategoryFilter 
                   selectedCategory={selectedCategory} 
                   onSelectCategory={handleCategorySelect} 
                 />
               </div>
               
-              <div className="mt-6">
+              <div className="mt-4">
                 <PriceFilter 
                   minPrice={minPrice} 
                   maxPrice={maxPrice} 
@@ -152,7 +152,7 @@ const ProductsPage: React.FC = () => {
           
           {/* Product grid */}
           <div className="w-full lg:w-3/4">
-            <div className="bg-white p-4 rounded-lg shadow-sm border mb-6">
+            <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
               <div className="flex justify-between items-center">
                 <p className="text-gray-600">
                   عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}

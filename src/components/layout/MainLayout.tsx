@@ -23,6 +23,7 @@ interface ContentContextType {
   siteContent: PageContent[];
   getContentForPage: (page: string, section: string) => PageContent | undefined;
   updatePageContent: (content: PageContent) => void;
+  addPageContent: (content: PageContent) => void;
 }
 
 export const ContentContext = createContext<ContentContextType | null>(null);
@@ -43,6 +44,41 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
     const content = localStorage.getItem('siteContent');
     if (content) {
       setSiteContent(JSON.parse(content));
+    } else {
+      // Initialize with default content if none exists
+      const defaultContent: PageContent[] = [
+        {
+          id: 'home-hero',
+          page: 'home',
+          section: 'hero',
+          title: 'منتجات التنظيف الأفضل',
+          content: 'تسوق الآن واحصل على أفضل منتجات التنظيف بأسعار منافسة',
+          imageUrl: 'https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+        },
+        {
+          id: 'products-header',
+          page: 'products',
+          section: 'header',
+          title: 'منتجاتنا',
+          content: 'تصفح مجموعتنا الواسعة من منتجات التنظيف عالية الجودة'
+        },
+        {
+          id: 'about-header',
+          page: 'about',
+          section: 'header',
+          title: 'من نحن',
+          content: 'نقدم منتجات تنظيف عالية الجودة منذ أكثر من 10 سنوات'
+        },
+        {
+          id: 'contact-header',
+          page: 'contact',
+          section: 'header',
+          title: 'اتصل بنا',
+          content: 'نحن هنا للمساعدة في أي استفسارات قد تكون لديك'
+        }
+      ];
+      setSiteContent(defaultContent);
+      localStorage.setItem('siteContent', JSON.stringify(defaultContent));
     }
   }, []);
 
@@ -58,11 +94,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
     localStorage.setItem('siteContent', JSON.stringify(newContent));
   };
 
+  const addPageContent = (newContent: PageContent) => {
+    const contentWithId = {
+      ...newContent,
+      id: newContent.id || `${newContent.page}-${newContent.section}-${Date.now()}`
+    };
+    const updatedContent = [...siteContent, contentWithId];
+    setSiteContent(updatedContent);
+    localStorage.setItem('siteContent', JSON.stringify(updatedContent));
+  };
+
   // Make content functions available to child components through context
   const contentContextValue = {
     siteContent,
     getContentForPage,
-    updatePageContent
+    updatePageContent,
+    addPageContent
   };
 
   return (

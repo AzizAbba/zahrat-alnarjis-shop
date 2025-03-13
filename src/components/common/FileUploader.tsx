@@ -3,11 +3,14 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { toast } from 'sonner';
 import { Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface FileUploaderProps {
   onFileUploaded: (url: string) => void;
   showUploadButton?: boolean;
   className?: string;
+  accept?: string;
+  maxSize?: number; // size in MB
 }
 
 export interface FileUploaderRef {
@@ -15,7 +18,13 @@ export interface FileUploaderRef {
 }
 
 export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
-  ({ onFileUploaded, showUploadButton = false, className = '' }, ref) => {
+  ({ 
+    onFileUploaded, 
+    showUploadButton = false, 
+    className = '', 
+    accept = 'image/*',
+    maxSize = 5 // 5MB default
+  }, ref) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
 
@@ -31,20 +40,20 @@ export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
       const file = event.target.files?.[0];
       if (!file) return;
 
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select an image file');
+      // Check if file type is accepted
+      if (accept !== '*' && !file.type.match(accept.replace('*', '.*'))) {
+        toast.error(`يرجى اختيار ملف ${accept.includes('image') ? 'صورة' : 'مدعوم'}`);
         return;
       }
 
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('File size must be less than 5MB');
+      // Validate file size (maxSize in MB)
+      if (file.size > maxSize * 1024 * 1024) {
+        toast.error(`حجم الملف يجب أن يكون أقل من ${maxSize} ميجابايت`);
         return;
       }
 
       setUploading(true);
-      toast.info('Processing image...');
+      toast.info('جاري معالجة الملف...');
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -53,7 +62,7 @@ export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
         // we'll use the data URL directly for demonstration
         // In a real app, this would upload to a server or cloud storage
         onFileUploaded(result);
-        toast.success('Image uploaded successfully');
+        toast.success('تم تحميل الملف بنجاح');
         setUploading(false);
 
         // Reset the input so the same file can be selected again
@@ -62,7 +71,7 @@ export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
         }
       };
       reader.onerror = () => {
-        toast.error('Error reading file');
+        toast.error('حدث خطأ أثناء قراءة الملف');
         setUploading(false);
       };
       reader.readAsDataURL(file);
@@ -74,7 +83,7 @@ export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept="image/*"
+          accept={accept}
           style={{ display: 'none' }}
         />
         
@@ -86,10 +95,10 @@ export const FileUploader = forwardRef<FileUploaderRef, FileUploaderProps>(
             disabled={uploading}
             className="flex items-center gap-2"
           >
-            {uploading ? 'Uploading...' : (
+            {uploading ? 'جاري التحميل...' : (
               <>
                 <Upload size={16} />
-                <span className="arabic">اختر صورة</span>
+                <span className="arabic">اختر ملفاً</span>
               </>
             )}
           </Button>
@@ -109,11 +118,24 @@ export const ImageUploader: React.FC<{
   className?: string;
 }> = ({ imageUrl, onImageUploaded, placeholder = '/placeholder.svg', className = '' }) => {
   const fileUploaderRef = useRef<FileUploaderRef>(null);
+  const [previewUrl, setPreviewUrl] = useState(imageUrl || placeholder);
+  const [loading, setLoading] = useState(false);
+
+  // Update preview when imageUrl changes
+  React.useEffect(() => {
+    setPreviewUrl(imageUrl || placeholder);
+  }, [imageUrl, placeholder]);
+
+  const handleImageUploaded = (url: string) => {
+    setPreviewUrl(url);
+    onImageUploaded(url);
+    setLoading(false);
+  };
 
   return (
-    <div className={`relative border rounded-md overflow-hidden ${className}`}>
+    <div className={cn("relative border rounded-md overflow-hidden", className)}>
       <img 
-        src={imageUrl || placeholder} 
+        src={previewUrl} 
         alt="Preview" 
         className="w-full h-full object-cover"
         onError={(e) => {
@@ -126,16 +148,28 @@ export const ImageUploader: React.FC<{
           variant="outline" 
           size="sm" 
           className="bg-white/90 hover:bg-white"
-          onClick={() => fileUploaderRef.current?.openFilePicker()}
+          onClick={() => {
+            setLoading(true);
+            fileUploaderRef.current?.openFilePicker();
+          }}
+          disabled={loading}
         >
-          <ImageIcon size={16} className="mr-2" />
-          <span className="arabic">تغيير الصورة</span>
+          {loading ? (
+            <span className="arabic">جاري التحميل...</span>
+          ) : (
+            <>
+              <ImageIcon size={16} className="mr-2" />
+              <span className="arabic">تغيير الصورة</span>
+            </>
+          )}
         </Button>
       </div>
       
       <FileUploader 
         ref={fileUploaderRef}
-        onFileUploaded={onImageUploaded}
+        onFileUploaded={handleImageUploaded}
+        accept="image/*"
+        maxSize={2} // 2MB max
       />
     </div>
   );
