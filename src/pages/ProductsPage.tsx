@@ -11,12 +11,8 @@ import { useContent } from '@/components/layout/MainLayout';
 
 const ProductsPage: React.FC = () => {
   const { products } = useProducts();
-  const { getContentForPage } = useContent();
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Get page content
-  const headerContent = getContentForPage('products', 'header');
   
   // Get search params
   const searchParams = new URLSearchParams(location.search);
@@ -120,56 +116,104 @@ const ProductsPage: React.FC = () => {
   };
   
   return (
-    <MainLayout onSearch={handleSearch}>
+    <MainLayout onSearch={handleSearch} pageName="products">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-red-600">
-          {headerContent?.title || 'منتجاتنا'}
-        </h1>
+        <ProductPageContent 
+          sortedProducts={sortedProducts}
+          selectedCategory={selectedCategory}
+          handleCategorySelect={handleCategorySelect}
+          searchQuery={searchQuery}
+          handleSearch={handleSearch}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          priceRange={priceRange}
+          handlePriceChange={handlePriceChange}
+          sortParam={sortParam}
+        />
+      </div>
+    </MainLayout>
+  );
+};
+
+interface ProductPageContentProps {
+  sortedProducts: any[];
+  selectedCategory: string | null;
+  handleCategorySelect: (categoryId: string | null) => void;
+  searchQuery: string;
+  handleSearch: (query: string) => void;
+  minPrice: number;
+  maxPrice: number;
+  priceRange: [number, number];
+  handlePriceChange: (values: [number, number]) => void;
+  sortParam: string;
+}
+
+const ProductPageContent: React.FC<ProductPageContentProps> = ({
+  sortedProducts,
+  selectedCategory,
+  handleCategorySelect,
+  searchQuery,
+  handleSearch,
+  minPrice,
+  maxPrice,
+  priceRange,
+  handlePriceChange,
+  sortParam
+}) => {
+  const { getContentForPage } = useContent();
+  
+  // Get page content
+  const headerContent = getContentForPage('products', 'header');
+  
+  return (
+    <>
+      <h1 className="text-3xl font-bold mb-8 text-red-600">
+        {headerContent?.title || 'منتجاتنا'}
+      </h1>
+      
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sidebar with filters */}
+        <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
+          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20">
+            <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+            
+            <div className="mt-4">
+              <CategoryFilter 
+                selectedCategory={selectedCategory} 
+                onSelectCategory={handleCategorySelect} 
+              />
+            </div>
+            
+            <div className="mt-4">
+              <PriceFilter 
+                minPrice={minPrice} 
+                maxPrice={maxPrice} 
+                priceRange={priceRange} 
+                onPriceChange={handlePriceChange} 
+              />
+            </div>
+          </div>
+        </div>
         
-        <div className="flex flex-col lg:flex-row">
-          {/* Sidebar with filters */}
-          <div className="w-full lg:w-1/4 mb-6 lg:mb-0 lg:pr-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20">
-              <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+        {/* Product grid */}
+        <div className="w-full lg:w-3/4">
+          <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
+            <div className="flex justify-between items-center">
+              <p className="text-gray-600">
+                عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
+              </p>
               
-              <div className="mt-4">
-                <CategoryFilter 
-                  selectedCategory={selectedCategory} 
-                  onSelectCategory={handleCategorySelect} 
-                />
-              </div>
-              
-              <div className="mt-4">
-                <PriceFilter 
-                  minPrice={minPrice} 
-                  maxPrice={maxPrice} 
-                  priceRange={priceRange} 
-                  onPriceChange={handlePriceChange} 
-                />
-              </div>
+              <SortOptions sortParam={sortParam} />
             </div>
           </div>
           
-          {/* Product grid */}
-          <div className="w-full lg:w-3/4">
-            <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
-              <div className="flex justify-between items-center">
-                <p className="text-gray-600">
-                  عرض {sortedProducts.length} منتج{sortedProducts.length !== 1 ? 'ات' : ''}
-                </p>
-                
-                <SortOptions sortParam={sortParam} />
-              </div>
-            </div>
-            
-            <ProductGrid 
-              products={sortedProducts} 
-              emptyMessage="لا توجد منتجات تطابق معايير البحث المحددة. حاول تعديل معايير البحث."
-            />
-          </div>
+          <ProductGrid 
+            products={sortedProducts} 
+            emptyMessage="لا توجد منتجات تطابق معايير البحث المحددة. حاول تعديل معايير البحث."
+          />
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 };
 
