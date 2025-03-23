@@ -16,10 +16,10 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
   onPriceChange 
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 border border-yellow-200">
+    <div className="bg-white rounded-lg shadow-sm p-5 border border-yellow-200">
       <h2 className="text-lg font-semibold mb-4 text-right arabic">نطاق السعر</h2>
       
-      <div className="mb-5">
+      <div className="mb-6">
         <Slider
           defaultValue={priceRange}
           value={priceRange}
@@ -27,11 +27,11 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
           max={maxPrice}
           step={1}
           onValueChange={(values) => onPriceChange(values as [number, number])}
-          className="my-6"
+          className="mt-2 mb-6"
         />
       </div>
       
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-2">
         <div className="text-sm">
           <span className="text-gray-500">الحد الأقصى:</span>
           <span className="mr-1 font-medium">{priceRange[1]} ريال</span>

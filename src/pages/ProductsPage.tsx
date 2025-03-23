@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
@@ -14,7 +13,6 @@ const ProductsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Get search params
   const searchParams = new URLSearchParams(location.search);
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
@@ -22,21 +20,17 @@ const ProductsPage: React.FC = () => {
   const maxPriceParam = searchParams.get('maxPrice');
   const sortParam = searchParams.get('sort') || 'default';
   
-  // Filter states
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryParam);
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
   
-  // Find min and max prices in products
   const minPrice = products.length ? Math.floor(Math.min(...products.map(p => p.price))) : 0;
   const maxPrice = products.length ? Math.ceil(Math.max(...products.map(p => p.price))) : 100;
   
-  // Price filter state
   const [priceRange, setPriceRange] = useState<[number, number]>([
     minPriceParam ? parseInt(minPriceParam) : minPrice,
     maxPriceParam ? parseInt(maxPriceParam) : maxPrice
   ]);
   
-  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
     
@@ -63,20 +57,16 @@ const ProductsPage: React.FC = () => {
     navigate({ search: params.toString() }, { replace: true });
   }, [selectedCategory, searchQuery, priceRange, navigate, minPrice, maxPrice, sortParam]);
   
-  // Filter products based on all criteria
   const filteredProducts = products.filter(product => {
-    // Category filter
     if (selectedCategory && product.categoryId !== selectedCategory) {
       return false;
     }
     
-    // Search filter
     if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
         !product.description.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     
-    // Price filter
     if (product.price < priceRange[0] || product.price > priceRange[1]) {
       return false;
     }
@@ -84,7 +74,6 @@ const ProductsPage: React.FC = () => {
     return true;
   });
   
-  // Sort products based on the sortParam
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortParam) {
       case 'price-low':
@@ -100,17 +89,14 @@ const ProductsPage: React.FC = () => {
     }
   });
   
-  // Handle category selection
   const handleCategorySelect = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
   };
   
-  // Handle search
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
   
-  // Handle price change
   const handlePriceChange = (values: [number, number]) => {
     setPriceRange(values);
   };
@@ -162,7 +148,6 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
 }) => {
   const { getContentForPage } = useContent();
   
-  // Get page content
   const headerContent = getContentForPage('products', 'header');
   
   return (
@@ -172,19 +157,20 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
       </h1>
       
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4 mb-6 lg:mb-0">
-          <div className="bg-white p-4 rounded-lg shadow-sm border sticky top-20 space-y-5">
-            <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+          <div className="bg-white p-5 rounded-lg shadow-sm border sticky top-20">
+            <div className="mb-6">
+              <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+            </div>
             
-            <div className="mb-1">
+            <div className="mb-6">
               <CategoryFilter 
                 selectedCategory={selectedCategory} 
                 onSelectCategory={handleCategorySelect} 
               />
             </div>
             
-            <div className="mt-1">
+            <div>
               <PriceFilter 
                 minPrice={minPrice} 
                 maxPrice={maxPrice} 
@@ -195,7 +181,6 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
           </div>
         </div>
         
-        {/* Product grid */}
         <div className="w-full lg:w-3/4">
           <div className="bg-white p-4 rounded-lg shadow-sm border mb-4">
             <div className="flex justify-between items-center">
@@ -217,7 +202,6 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
   );
 };
 
-// Helper component for sort options
 const SortOptions: React.FC<{ sortParam: string }> = ({ sortParam }) => {
   const navigate = useNavigate();
   const location = useLocation();
