@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Home, ShoppingBag, Users, Settings, Layout, Truck, MessageSquare, ArrowLeft, FileText } from 'lucide-react';
+import { Home, ShoppingBag, Users, Settings, Layout, Truck, MessageSquare, ArrowLeft, FileText, Layers } from 'lucide-react';
 import { ContentContext, PageContent, useContent } from '@/components/layout/MainLayout';
 import { useEffect } from 'react';
 
@@ -99,6 +100,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   >
                     <ShoppingBag className="w-5 h-5" />
                     <span className="arabic">المنتجات</span>
+                  </Link>
+                  <Link
+                    to="/admin/categories"
+                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
+                  >
+                    <Layers className="w-5 h-5" />
+                    <span className="arabic">التصنيفات</span>
                   </Link>
                   <Link
                     to="/admin/orders"

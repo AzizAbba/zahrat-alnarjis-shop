@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +30,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { MessageProvider } from "./contexts/MessageContext";
 import SiteContentPage from "./pages/admin/SiteContentPage";
+import CategoriesPage from "./pages/admin/CategoriesPage";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +76,14 @@ function App() {
                         } 
                       />
                       <Route 
+                        path="/admin/categories" 
+                        element={
+                          <ProtectedRoute requireAdmin>
+                            <CategoriesPage />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
                         path="/admin/orders" 
                         element={
                           <ProtectedRoute requireAdmin>
@@ -112,14 +120,6 @@ function App() {
                         element={
                           <ProtectedRoute requireAdmin>
                             <DeliveryManagementPage />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/admin/subcategories" 
-                        element={
-                          <ProtectedRoute requireAdmin>
-                            <SubcategoryManagementPage />
                           </ProtectedRoute>
                         } 
                       />
