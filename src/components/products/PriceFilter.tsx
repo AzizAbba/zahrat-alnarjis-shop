@@ -16,7 +16,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
   onPriceChange
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-5 border border-yellow-200 mt-6">
+    <div className="bg-white rounded-lg shadow-sm p-5 border border-yellow-200 mb-6">
       <h2 className="text-lg font-semibold mb-4 text-right arabic">نطاق السعر</h2>
       
       <div className="mb-6">

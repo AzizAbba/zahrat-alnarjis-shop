@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,7 @@ import { useContent } from '@/components/layout/MainLayout';
 const SettingsPage = () => {
   const { user } = useAuth();
   const { siteContent } = useContent();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [storeSettings, setStoreSettings] = useState({
     storeName: localStorage.getItem('storeName') || 'زهرة النرجس',
@@ -100,6 +101,12 @@ const SettingsPage = () => {
     localStorage.clear();
     toast.success('تم مسح الذاكرة المؤقتة بنجاح');
     window.location.reload();
+  };
+  
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
   
   if (!user?.isSuperAdmin) {
@@ -358,8 +365,10 @@ const SettingsPage = () => {
                         accept=".json"
                         onChange={handleImportData}
                         className="arabic"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
                       />
-                      <Button variant="outline" onClick={() => document.querySelector('input[type="file"]')?.click()}>
+                      <Button variant="outline" onClick={triggerFileInput}>
                         <FileUp className="h-4 w-4 mr-2" />
                         <span className="arabic">اختيار ملف</span>
                       </Button>
