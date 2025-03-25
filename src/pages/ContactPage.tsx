@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MapPin, Phone, Mail, Send, Loader2 } from 'lucide-react';
 import { useMessages } from '@/contexts/MessageContext';
+import { toast } from '@/components/ui/use-toast';
 
 const ContactPage = () => {
   const { addMessage } = useMessages();
@@ -29,7 +30,11 @@ const ContactPage = () => {
     
     // Validate form
     if (!formData.name || !formData.email || !formData.message) {
-      alert('الرجاء تعبئة جميع الحقول المطلوبة');
+      toast({
+        title: "خطأ في الإدخال",
+        description: 'الرجاء تعبئة جميع الحقول المطلوبة',
+        variant: "destructive"
+      });
       setIsSubmitting(false);
       return;
     }
@@ -53,6 +58,11 @@ const ContactPage = () => {
         message: ''
       });
       setIsSubmitting(false);
+      
+      toast({
+        title: "تم إرسال الرسالة",
+        description: "سنقوم بالرد عليك في أقرب وقت ممكن",
+      });
     }, 1000);
   };
 
