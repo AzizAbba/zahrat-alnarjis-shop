@@ -1,13 +1,7 @@
 
-import React, { useEffect, useState, createContext, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-
-interface MainLayoutProps {
-  children: React.ReactNode;
-  onSearch?: (query: string) => void;
-  pageName?: string;
-}
 
 export interface PageContent {
   id: string;
@@ -18,22 +12,43 @@ export interface PageContent {
   imageUrl?: string;
 }
 
-// Create a context for site content
 interface ContentContextType {
   siteContent: PageContent[];
-  getContentForPage: (page: string, section: string) => PageContent | undefined;
   updatePageContent: (content: PageContent) => void;
   addPageContent: (content: PageContent) => void;
+  getPageContent: (page: string, section: string) => PageContent | undefined;
+  removePageContent: (id: string) => void;
 }
 
-export const ContentContext = createContext<ContentContextType>({
-  siteContent: [],
-  getContentForPage: () => undefined,
-  updatePageContent: () => {},
-  addPageContent: () => {}
-});
+const defaultContent: PageContent[] = [
+  {
+    id: 'home-hero-1',
+    page: 'home',
+    section: 'hero',
+    title: 'زهرة النرجس',
+    content: 'أفضل منتجات العناية بالبشرة الطبيعية',
+    imageUrl: '/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png'
+  },
+  {
+    id: 'about-main-1',
+    page: 'about',
+    section: 'main',
+    title: 'من نحن',
+    content: 'نحن متجر متخصص في بيع منتجات العناية بالبشرة الطبيعية المصنوعة من أجود المكونات الطبيعية.',
+    imageUrl: '/placeholder.svg'
+  },
+  {
+    id: 'contact-info-1',
+    page: 'contact',
+    section: 'info',
+    title: 'معلومات الاتصال',
+    content: 'يمكنكم التواصل معنا عبر الهاتف أو البريد الإلكتروني أو من خلال النموذج أدناه.',
+    imageUrl: ''
+  }
+];
 
-// Custom hook to use the content context
+const ContentContext = createContext<ContentContextType | undefined>(undefined);
+
 export const useContent = () => {
   const context = useContext(ContentContext);
   if (!context) {
@@ -42,86 +57,65 @@ export const useContent = () => {
   return context;
 };
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName }) => {
-  const [siteContent, setSiteContent] = useState<PageContent[]>([]);
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
 
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const [siteContent, setSiteContent] = useState<PageContent[]>([]);
+  
   useEffect(() => {
-    const content = localStorage.getItem('siteContent');
-    if (content) {
-      setSiteContent(JSON.parse(content));
+    // Load content from localStorage or use default
+    const storedContent = localStorage.getItem('siteContent');
+    if (storedContent) {
+      setSiteContent(JSON.parse(storedContent));
     } else {
-      // Initialize with default content if none exists
-      const defaultContent: PageContent[] = [
-        {
-          id: 'home-hero',
-          page: 'home',
-          section: 'hero',
-          title: 'منتجات التنظيف الأفضل',
-          content: 'تسوق الآن واحصل على أفضل منتجات التنظيف بأسعار منافسة',
-          imageUrl: 'https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-        },
-        {
-          id: 'products-header',
-          page: 'products',
-          section: 'header',
-          title: 'منتجاتنا',
-          content: 'تصفح مجموعتنا الواسعة من منتجات التنظيف عالية الجودة'
-        },
-        {
-          id: 'about-header',
-          page: 'about',
-          section: 'header',
-          title: 'من نحن',
-          content: 'نقدم منتجات تنظيف عالية الجودة منذ أكثر من 10 سنوات'
-        },
-        {
-          id: 'contact-header',
-          page: 'contact',
-          section: 'header',
-          title: 'اتصل بنا',
-          content: 'نحن هنا للمساعدة في أي استفسارات قد تكون لديك'
-        }
-      ];
       setSiteContent(defaultContent);
       localStorage.setItem('siteContent', JSON.stringify(defaultContent));
     }
   }, []);
-
-  const getContentForPage = (page: string, section: string) => {
-    return siteContent.find(content => content.page === page && content.section === section);
+  
+  const updatePageContent = (content: PageContent) => {
+    setSiteContent(prev => {
+      const newContent = prev.map(item => 
+        item.id === content.id ? content : item
+      );
+      localStorage.setItem('siteContent', JSON.stringify(newContent));
+      return newContent;
+    });
   };
-
-  const updatePageContent = (updatedContent: PageContent) => {
-    const newContent = siteContent.map(item => 
-      item.id === updatedContent.id ? updatedContent : item
-    );
-    setSiteContent(newContent);
-    localStorage.setItem('siteContent', JSON.stringify(newContent));
+  
+  const addPageContent = (content: PageContent) => {
+    setSiteContent(prev => {
+      const newContent = [...prev, content];
+      localStorage.setItem('siteContent', JSON.stringify(newContent));
+      return newContent;
+    });
   };
-
-  const addPageContent = (newContent: PageContent) => {
-    const contentWithId = {
-      ...newContent,
-      id: newContent.id || `${newContent.page}-${newContent.section}-${Date.now()}`
-    };
-    const updatedContent = [...siteContent, contentWithId];
-    setSiteContent(updatedContent);
-    localStorage.setItem('siteContent', JSON.stringify(updatedContent));
+  
+  const removePageContent = (id: string) => {
+    setSiteContent(prev => {
+      const newContent = prev.filter(item => item.id !== id);
+      localStorage.setItem('siteContent', JSON.stringify(newContent));
+      return newContent;
+    });
   };
-
-  // Make content functions available to child components through context
-  const contentContextValue: ContentContextType = {
-    siteContent,
-    getContentForPage,
-    updatePageContent,
-    addPageContent
+  
+  const getPageContent = (page: string, section: string) => {
+    return siteContent.find(item => item.page === page && item.section === section);
   };
-
+  
   return (
-    <ContentContext.Provider value={contentContextValue}>
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Navbar onSearch={onSearch} />
-        <main className="flex-grow container mx-auto px-4 py-8">
+    <ContentContext.Provider value={{
+      siteContent,
+      updatePageContent,
+      addPageContent,
+      getPageContent,
+      removePageContent
+    }}>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow">
           {children}
         </main>
         <Footer />

@@ -1,212 +1,201 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Card } from '@/components/ui/card';
+import { useContent } from '@/components/layout/MainLayout';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Phone, Mail, MapPin, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import { useMessages } from '@/contexts/MessageContext';
+import { MapPin, Phone, Mail } from 'lucide-react';
 
 const ContactPage = () => {
+  const { getPageContent } = useContent();
+  const { addMessage } = useMessages();
+  const contactInfo = getPageContent('contact', 'info');
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    subject: '',
     message: ''
   });
   
-  const [errors, setErrors] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user types
-    if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+    // Clear error when field is edited
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
   
-  const validateForm = () => {
-    const newErrors = {
-      name: formData.name ? '' : 'الاسم مطلوب',
-      email: formData.email ? '' : 'البريد الإلكتروني مطلوب',
-      message: formData.message ? '' : 'الرسالة مطلوبة'
-    };
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) newErrors.name = 'الاسم مطلوب';
+    if (!formData.email.trim()) {
+      newErrors.email = 'البريد الإلكتروني مطلوب';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'البريد الإلكتروني غير صالح';
+    }
+    if (!formData.phone.trim()) newErrors.phone = 'رقم الهاتف مطلوب';
+    if (!formData.subject.trim()) newErrors.subject = 'الموضوع مطلوب';
+    if (!formData.message.trim()) newErrors.message = 'الرسالة مطلوبة';
     
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
+    return Object.keys(newErrors).length === 0;
   };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
-    
-    // Here you would normally send the form data to your backend
-    console.log('Form submitted:', formData);
-    
-    // Show success message and reset form
-    toast.success('تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''
-    });
+    if (validate()) {
+      addMessage(formData);
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    }
   };
   
   return (
     <MainLayout>
-      <div className="container max-w-6xl py-12">
+      <div className="container mx-auto py-12 px-4 md:px-6">
         <h1 className="text-3xl font-bold mb-8 text-center arabic">اتصل بنا</h1>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Contact Information */}
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold mb-6 arabic">{contactInfo?.title || 'معلومات الاتصال'}</h2>
+            <p className="mb-6 arabic">{contactInfo?.content || 'يمكنكم التواصل معنا عبر الهاتف أو البريد الإلكتروني أو من خلال النموذج أدناه.'}</p>
+            
+            <div className="space-y-6">
+              <div className="flex items-start">
+                <MapPin className="h-6 w-6 text-narcissus-600 mt-1 ml-3" />
+                <div>
+                  <h3 className="font-medium arabic">العنوان</h3>
+                  <p className="text-gray-600 arabic">شارع الملك فهد، الرياض، المملكة العربية السعودية</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <Phone className="h-6 w-6 text-narcissus-600 mt-1 ml-3" />
+                <div>
+                  <h3 className="font-medium arabic">الهاتف</h3>
+                  <p className="text-gray-600">+966 12 345 6789</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <Mail className="h-6 w-6 text-narcissus-600 mt-1 ml-3" />
+                <div>
+                  <h3 className="font-medium arabic">البريد الإلكتروني</h3>
+                  <p className="text-gray-600">info@zharnarjis.com</p>
+                </div>
+              </div>
+            </div>
+            
+            {contactInfo?.imageUrl && (
+              <div className="mt-8">
+                <img 
+                  src={contactInfo.imageUrl} 
+                  alt="اتصل بنا" 
+                  className="rounded-lg w-full h-auto"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/placeholder.svg';
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          
           {/* Contact Form */}
-          <Card className="p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-4 arabic">أرسل لنا رسالة</h2>
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h2 className="text-xl font-semibold mb-6 arabic">نموذج التواصل</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="name" className="arabic">الاسم</Label>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1 arabic">الاسم</label>
                 <Input
                   id="name"
                   name="name"
-                  dir="rtl"
                   value={formData.name}
                   onChange={handleChange}
-                  className={errors.name ? 'border-red-500' : ''}
+                  className={`w-full ${errors.name ? 'border-red-500' : ''}`}
+                  dir="rtl"
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1 arabic">{errors.name}</p>}
               </div>
               
               <div>
-                <Label htmlFor="email" className="arabic">البريد الإلكتروني</Label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 arabic">البريد الإلكتروني</label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  dir="ltr"
                   value={formData.email}
                   onChange={handleChange}
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={`w-full ${errors.email ? 'border-red-500' : ''}`}
+                  dir="rtl"
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1 arabic">{errors.email}</p>}
               </div>
               
               <div>
-                <Label htmlFor="phone" className="arabic">رقم الهاتف (اختياري)</Label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1 arabic">رقم الهاتف</label>
                 <Input
                   id="phone"
                   name="phone"
-                  dir="ltr"
                   value={formData.phone}
                   onChange={handleChange}
+                  className={`w-full ${errors.phone ? 'border-red-500' : ''}`}
+                  dir="rtl"
                 />
+                {errors.phone && <p className="text-red-500 text-sm mt-1 arabic">{errors.phone}</p>}
               </div>
               
               <div>
-                <Label htmlFor="message" className="arabic">الرسالة</Label>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1 arabic">الموضوع</label>
+                <Input
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className={`w-full ${errors.subject ? 'border-red-500' : ''}`}
+                  dir="rtl"
+                />
+                {errors.subject && <p className="text-red-500 text-sm mt-1 arabic">{errors.subject}</p>}
+              </div>
+              
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1 arabic">الرسالة</label>
                 <Textarea
                   id="message"
                   name="message"
-                  dir="rtl"
-                  rows={5}
                   value={formData.message}
                   onChange={handleChange}
-                  className={errors.message ? 'border-red-500' : ''}
+                  rows={5}
+                  className={`w-full ${errors.message ? 'border-red-500' : ''}`}
+                  dir="rtl"
                 />
                 {errors.message && <p className="text-red-500 text-sm mt-1 arabic">{errors.message}</p>}
               </div>
               
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full arabic">
                 إرسال الرسالة
               </Button>
             </form>
-          </Card>
-          
-          {/* Contact Information */}
-          <div className="space-y-6">
-            <Card className="p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4 arabic">معلومات التواصل</h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Phone className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h3 className="font-medium arabic">رقم الهاتف</h3>
-                    <p className="text-muted-foreground ltr">+966 55 555 5555</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Mail className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h3 className="font-medium arabic">البريد الإلكتروني</h3>
-                    <p className="text-muted-foreground ltr">info@narjiscleaning.com</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h3 className="font-medium arabic">العنوان</h3>
-                    <p className="text-muted-foreground arabic">
-                      الرياض، المملكة العربية السعودية<br />
-                      طريق الملك فهد، حي العليا
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h3 className="font-medium arabic">ساعات العمل</h3>
-                    <p className="text-muted-foreground arabic">
-                      من الأحد إلى الخميس<br />
-                      8:00 صباحاً - 5:00 مساءً
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-            
-            <Card className="p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4 arabic">تابعنا على</h2>
-              
-              <div className="flex justify-center gap-4">
-                <a href="#" className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  </svg>
-                </a>
-                <a href="#" className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
-                </a>
-                <a href="#" className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary">
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  </svg>
-                </a>
-                <a href="#" className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                  </svg>
-                </a>
-              </div>
-            </Card>
           </div>
         </div>
       </div>

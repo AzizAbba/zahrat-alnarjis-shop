@@ -33,74 +33,18 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-
-// Sample message data
-const sampleMessages = [
-  {
-    id: '1',
-    name: 'أحمد محمد',
-    email: 'ahmed@example.com',
-    phone: '+966 55 123 4567',
-    subject: 'استفسار عن المنتجات',
-    message: 'مرحباً، أود الاستفسار عن توفر المنتجات وأوقات التوصيل. شكراً لكم.',
-    date: '2023-08-15T10:30:00',
-    status: 'unread',
-    starred: false
-  },
-  {
-    id: '2',
-    name: 'سارة أحمد',
-    email: 'sara@example.com',
-    phone: '+966 50 987 6543',
-    subject: 'مشكلة في الطلب #12345',
-    message: 'مرحباً، أواجه مشكلة في طلبي رقم 12345، حيث لم يصلني المنتج بعد رغم مرور أسبوع على الطلب. أرجو المساعدة.',
-    date: '2023-08-14T16:45:00',
-    status: 'read',
-    starred: true
-  },
-  {
-    id: '3',
-    name: 'محمد علي',
-    email: 'mohamed@example.com',
-    phone: '+966 56 555 7777',
-    subject: 'طلب تعاون تجاري',
-    message: 'مرحباً، أود التواصل بخصوص إمكانية التعاون التجاري وعرض منتجاتكم في متجرنا. أرجو التواصل على الرقم الموضح.',
-    date: '2023-08-13T09:15:00',
-    status: 'replied',
-    starred: false
-  },
-  {
-    id: '4',
-    name: 'فاطمة خالد',
-    email: 'fatima@example.com',
-    phone: '+966 54 123 9876',
-    subject: 'شكر وتقدير',
-    message: 'أشكركم على السرعة في توصيل طلبي والجودة العالية للمنتجات. سأوصي بكم لجميع أصدقائي.',
-    date: '2023-08-12T14:20:00',
-    status: 'read',
-    starred: true
-  },
-  {
-    id: '5',
-    name: 'عبدالله محمد',
-    email: 'abdullah@example.com',
-    phone: '+966 59 888 1234',
-    subject: 'استرجاع منتج',
-    message: 'أود استرجاع المنتج الذي اشتريته لأنه لا يتناسب مع احتياجاتي. أرجو إرشادي حول كيفية إتمام عملية الاسترجاع.',
-    date: '2023-08-11T11:10:00',
-    status: 'replied',
-    starred: false
-  }
-];
+import { useMessages } from '@/contexts/MessageContext';
+import { ContactMessage } from '@/types/message';
 
 const MessagesPage = () => {
-  const [messages, setMessages] = useState(sampleMessages);
+  const { messages, updateMessage, deleteMessage, markAsRead, markAsReplied, toggleStar } = useMessages();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [replyText, setReplyText] = useState('');
   
   // Filter messages based on search term and status
   const filteredMessages = messages.filter(message => {
@@ -114,20 +58,9 @@ const MessagesPage = () => {
     return matchesSearch && message.status === statusFilter;
   });
   
-  const handleStatusChange = (messageId: string, newStatus: string) => {
-    setMessages(messages.map(msg => 
-      msg.id === messageId ? { ...msg, status: newStatus } : msg
-    ));
-    
-    toast({
-      title: "تم تحديث الحالة",
-      description: "تم تغيير حالة الرسالة بنجاح",
-    });
-  };
-  
   const handleDeleteConfirm = () => {
     if (messageToDelete) {
-      setMessages(messages.filter(msg => msg.id !== messageToDelete));
+      deleteMessage(messageToDelete);
       if (selectedMessage && selectedMessage.id === messageToDelete) {
         setSelectedMessage(null);
       }
@@ -142,24 +75,28 @@ const MessagesPage = () => {
   };
   
   const handleReply = () => {
+    if (!selectedMessage || !replyText.trim()) {
+      toast({
+        title: "خطأ",
+        description: "يرجى كتابة الرد",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     // Simulate API call
     setTimeout(() => {
-      handleStatusChange(selectedMessage.id, 'replied');
+      markAsReplied(selectedMessage.id, replyText);
       setIsLoading(false);
+      setReplyText('');
       
       toast({
         title: "تم الإرسال",
         description: "تم إرسال الرد بنجاح",
       });
     }, 1500);
-  };
-  
-  const handleToggleStar = (messageId: string) => {
-    setMessages(messages.map(msg => 
-      msg.id === messageId ? { ...msg, starred: !msg.starred } : msg
-    ));
   };
   
   // Format date to readable string
@@ -229,7 +166,7 @@ const MessagesPage = () => {
                   onClick={() => {
                     setSelectedMessage(message);
                     if (message.status === 'unread') {
-                      handleStatusChange(message.id, 'read');
+                      markAsRead(message.id);
                     }
                   }}
                 >
@@ -246,7 +183,7 @@ const MessagesPage = () => {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleToggleStar(message.id);
+                          toggleStar(message.id);
                         }}
                         className="text-gray-400 hover:text-yellow-400"
                       >
@@ -298,7 +235,7 @@ const MessagesPage = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      handleToggleStar(selectedMessage.id);
+                      toggleStar(selectedMessage.id);
                     }}
                     className="text-gray-400 hover:text-yellow-400"
                   >
@@ -349,6 +286,18 @@ const MessagesPage = () => {
                   </div>
                 </div>
                 
+                {selectedMessage.reply && (
+                  <>
+                    <Separator className="my-4" />
+                    <div className="mb-6">
+                      <h3 className="font-medium mb-2 arabic">الرد السابق:</h3>
+                      <div className="p-4 bg-narcissus-50 rounded-lg border border-narcissus-200 text-gray-700">
+                        {selectedMessage.reply}
+                      </div>
+                    </div>
+                  </>
+                )}
+                
                 <Separator className="my-4" />
                 
                 <div>
@@ -357,6 +306,8 @@ const MessagesPage = () => {
                     className="w-full p-3 border rounded-lg min-h-[120px] focus:outline-none focus:ring-1 focus:ring-narcissus-500"
                     placeholder="اكتب ردك هنا..."
                     dir="rtl"
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
                   ></textarea>
                   
                   <div className="flex justify-end mt-4">
@@ -368,7 +319,7 @@ const MessagesPage = () => {
                       إلغاء
                     </Button>
                     <Button
-                      disabled={isLoading || selectedMessage.status === 'replied'}
+                      disabled={isLoading || !replyText.trim()}
                       onClick={handleReply}
                     >
                       {isLoading ? (

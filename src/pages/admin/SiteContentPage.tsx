@@ -30,7 +30,7 @@ import {
 
 const SiteContentPage = () => {
   // Use the custom hook to access content
-  const { siteContent, updatePageContent, addPageContent } = useContent();
+  const { siteContent, updatePageContent, addPageContent, removePageContent } = useContent();
   const [currentTab, setCurrentTab] = useState('home');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -71,9 +71,7 @@ const SiteContentPage = () => {
   const confirmDelete = () => {
     if (!selectedContent) return;
     
-    const newContent = siteContent.filter(item => item.id !== selectedContent.id);
-    localStorage.setItem('siteContent', JSON.stringify(newContent));
-    window.location.reload();
+    removePageContent(selectedContent.id);
     toast.success('تم حذف المحتوى بنجاح');
     setIsDeleteDialogOpen(false);
   };
