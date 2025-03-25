@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -47,7 +46,7 @@ const defaultContent: PageContent[] = [
   }
 ];
 
-const ContentContext = createContext<ContentContextType | undefined>(undefined);
+export const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 export const useContent = () => {
   const context = useContext(ContentContext);
@@ -67,7 +66,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName })
   const [siteContent, setSiteContent] = useState<PageContent[]>([]);
   
   useEffect(() => {
-    // Load content from localStorage or use default
     const storedContent = localStorage.getItem('siteContent');
     if (storedContent) {
       setSiteContent(JSON.parse(storedContent));
