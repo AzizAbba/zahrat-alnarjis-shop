@@ -9,14 +9,14 @@ interface PriceFilterProps {
   onPriceChange: (values: [number, number]) => void;
 }
 
-const PriceFilter: React.FC<PriceFilterProps> = ({ 
-  minPrice, 
-  maxPrice, 
-  priceRange, 
-  onPriceChange 
+const PriceFilter: React.FC<PriceFilterProps> = ({
+  minPrice,
+  maxPrice,
+  priceRange,
+  onPriceChange
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-5 border border-yellow-200">
+    <div className="bg-white rounded-lg shadow-sm p-5 border border-yellow-200 mt-6">
       <h2 className="text-lg font-semibold mb-4 text-right arabic">نطاق السعر</h2>
       
       <div className="mb-6">
@@ -27,17 +27,17 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
           max={maxPrice}
           step={1}
           onValueChange={(values) => onPriceChange(values as [number, number])}
-          className="mt-2 mb-6"
+          className="mt-2"
         />
       </div>
       
-      <div className="flex justify-between mt-2">
+      <div className="flex justify-between mt-4">
         <div className="text-sm">
-          <span className="text-gray-500">الحد الأقصى:</span>
+          <span className="text-gray-500 arabic">الحد الأقصى:</span>
           <span className="mr-1 font-medium">{priceRange[1]} ريال</span>
         </div>
         <div className="text-sm">
-          <span className="text-gray-500">الحد الأدنى:</span>
+          <span className="text-gray-500 arabic">الحد الأدنى:</span>
           <span className="mr-1 font-medium">{priceRange[0]} ريال</span>
         </div>
       </div>
