@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
@@ -146,9 +147,9 @@ const ProductPageContent: React.FC<ProductPageContentProps> = ({
   handlePriceChange,
   sortParam
 }) => {
-  const { getContentForPage } = useContent();
+  const { getPageContent } = useContent();
   
-  const headerContent = getContentForPage('products', 'header');
+  const headerContent = getPageContent('products', 'header');
   
   return (
     <>

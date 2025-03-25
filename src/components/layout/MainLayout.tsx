@@ -59,9 +59,11 @@ export const useContent = () => {
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  onSearch?: (query: string) => void;
+  pageName?: string;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, onSearch, pageName }) => {
   const [siteContent, setSiteContent] = useState<PageContent[]>([]);
   
   useEffect(() => {
@@ -114,7 +116,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       removePageContent
     }}>
       <div className="flex flex-col min-h-screen">
-        <Navbar />
+        <Navbar onSearch={onSearch} />
         <main className="flex-grow">
           {children}
         </main>
