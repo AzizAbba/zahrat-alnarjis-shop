@@ -59,7 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
           <div className="flex items-center">
             <Link to="/" className="mr-2">
               <img 
-                src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+                src="lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
                 alt="زهرة النرجس" 
                 className="h-10" 
               />

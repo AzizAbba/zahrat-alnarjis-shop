@@ -62,7 +62,7 @@ const AdminLoginPage = () => {
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-lg border animate-fadeIn">
         <div className="text-center">
           <img 
-            src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+            src="lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
             alt="زهرة النرجس" 
             className="h-24 mx-auto mb-4"
           />

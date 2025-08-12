@@ -56,7 +56,7 @@ const LoginPage = () => {
         <div className="max-w-md mx-auto bg-card rounded-lg shadow-md border p-6">
           <div className="text-center mb-6">
             <img 
-              src="/lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
+              src="lovable-uploads/f1704d88-b08e-4a51-90be-eaeb1edea8ca.png" 
               alt="زهرة النرجس" 
               className="h-24 mx-auto mb-4"
             />
